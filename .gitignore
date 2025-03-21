@@ -1,0 +1,35 @@
+# Build Folders
+bin/
+obj/
+
+# User-Specific Files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and Debugging
+*.log
+
+# IDE Settings
+.vscode/
+.idea/
+*.vs/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Dependency Directories
+packages/
+node_modules/
+
+# Visual Studio Code Workspace Settings
+.vscode/*
+
+# Rider IDE
+.idea/
+
+# Others
+*.swp
+*~
