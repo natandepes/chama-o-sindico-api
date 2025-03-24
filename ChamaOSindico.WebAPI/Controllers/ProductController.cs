@@ -1,4 +1,5 @@
-﻿using ChamaOSindico.Infra.Repositories;
+﻿using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Infra.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChamaOSindico.WebAPI.Controllers
@@ -18,6 +19,13 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
             return Ok(await _repository.GetAllAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct(Product product)
+        {
+            await _repository.CreateAsync(product);
+            return Ok();
         }
     }
 }

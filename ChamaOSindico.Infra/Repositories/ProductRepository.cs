@@ -17,5 +17,11 @@ namespace ChamaOSindico.Infra.Repositories
         {
             return await _context.Products.ToListAsync();
         }
+
+        public async Task CreateAsync(Product product)
+        {
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+        }
     }
 }
