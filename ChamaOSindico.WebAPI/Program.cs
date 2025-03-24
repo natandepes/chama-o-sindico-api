@@ -1,4 +1,9 @@
+using ChamaOSindico.IoC;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Register services from DependencyInjection class
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 
