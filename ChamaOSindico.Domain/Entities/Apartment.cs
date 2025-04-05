@@ -1,8 +1,7 @@
 ﻿namespace ChamaOSindico.Domain.Entities
 {
-    public class Apartment
+    public class Apartment : BaseEntity
     {
-        public string? Id { get; set; }
         public int ApartmentNumber { get; set; }
         public List<Resident>? Residents { get; set; } = new List<Resident>();
         public List<Visitor>? Visitors { get; set; } = new List<Visitor>();

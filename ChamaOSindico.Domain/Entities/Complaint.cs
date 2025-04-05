@@ -2,9 +2,8 @@
 
 namespace ChamaOSindico.Domain.Entities
 {
-    public class Complaint
+    public class Complaint : BaseEntity
     {
-        public string? Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }

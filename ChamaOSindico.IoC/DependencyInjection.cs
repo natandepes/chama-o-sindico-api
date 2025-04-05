@@ -1,4 +1,5 @@
-﻿using ChamaOSindico.Infra.ConfigurationFiles;
+﻿using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Infra.ConfigurationFiles;
 using ChamaOSindico.Infra.Context;
 using ChamaOSindico.Infra.Repository;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,10 @@ namespace ChamaOSindico.IoC
 
             // Register Repositories
             services.AddScoped<TesteIntegracaoRepository>();
+            
+            
+            services.AddScoped<ComplaintRepository>();
+            services.AddScoped<VehicleRepository>();
 
             // Register Services
 
