@@ -46,6 +46,8 @@ namespace CleanArchMvc.Infra.IoC
 
             // Register Repositories
             services.AddScoped<TesteIntegracaoRepository>();
+            services.AddScoped<ComplaintRepository>();
+            services.AddScoped<VehicleRepository>();
             services.AddScoped<UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
 

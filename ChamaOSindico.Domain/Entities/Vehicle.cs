@@ -2,9 +2,8 @@
 
 namespace ChamaOSindico.Domain.Entities
 {
-    public class Vehicle
+    public class Vehicle : BaseEntity
     {
-        public string? Id { get; set; }
         public string? LicensePlate { get; set; }
         public string? Model { get; set; }
         public VehicleColorEnum Color { get; set; }
