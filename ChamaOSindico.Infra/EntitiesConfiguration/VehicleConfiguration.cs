@@ -2,8 +2,7 @@
 using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Infra.ConfigurationFiles;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization;]
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace ChamaOSindico.Infra.EntitiesConfiguration
@@ -15,10 +14,6 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
         public void Configure(BsonClassMap<Vehicle> classMap)
         {
             classMap.AutoMap();
-
-            classMap.MapIdMember(v => v.Id)
-                .SetIdGenerator(StringObjectIdGenerator.Instance)
-                .SetSerializer(new StringSerializer(BsonType.ObjectId));
             
             classMap.MapMember(v => v.LicensePlate)
                 .SetIsRequired(true)
