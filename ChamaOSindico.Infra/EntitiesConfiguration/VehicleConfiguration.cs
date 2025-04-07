@@ -2,7 +2,7 @@
 using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Infra.ConfigurationFiles;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;]
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace ChamaOSindico.Infra.EntitiesConfiguration
@@ -14,10 +14,9 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
         public void Configure(BsonClassMap<Vehicle> classMap)
         {
             classMap.AutoMap();
-            
+
             classMap.MapMember(v => v.LicensePlate)
-                .SetIsRequired(true)
-                .SetElementName("license_plate"); 
+                .SetIsRequired(true);
             
             classMap.MapMember(v => v.Model)
                 .SetIsRequired(true);
