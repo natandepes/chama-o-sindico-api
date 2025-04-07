@@ -1,11 +1,13 @@
 ﻿using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Infra.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TesteIntegracaoController : ControllerBase
     {
         // controller de teste de integração com o mongo
