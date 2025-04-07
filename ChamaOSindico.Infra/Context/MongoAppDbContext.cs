@@ -1,5 +1,9 @@
-﻿using ChamaOSindico.Infra.ConfigurationFiles;
+﻿using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Infra.ConfigurationFiles;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System.Reflection;
 
@@ -26,6 +30,17 @@ namespace ChamaOSindico.Infra.Context
         // Método para aplicar as configurações de mapeamento de entidades
         private void ApplyConfigurations()
         {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
+            {
+                BsonClassMap.RegisterClassMap<BaseEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.MapMember(e => e.Id)
+                      .SetIdGenerator(StringObjectIdGenerator.Instance)
+                      .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                });
+            }
+
             var configTypes = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMongoEntityConfiguration<>)));
