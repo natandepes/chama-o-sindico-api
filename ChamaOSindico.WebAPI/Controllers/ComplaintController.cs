@@ -1,5 +1,5 @@
-﻿using ChamaOSindico.Domain.Entities;
-using ChamaOSindico.Infra.Repository;
+﻿using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChamaOSindico.WebAPI.Controllers
@@ -7,49 +7,47 @@ namespace ChamaOSindico.WebAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class ComplaintController : ControllerBase
-    {
-        // controller de teste de integração com o mongo
-        
-        private readonly ComplaintRepository _complaintRepository;
+    {   
+        private readonly IComplaintService _complaintService;
 
-        public ComplaintController(ComplaintRepository complaintRepository)
+        public ComplaintController(IComplaintService complaintService)
         {
-            _complaintRepository = complaintRepository;
+            _complaintService = complaintService;
         }
 
         [HttpGet("GetAllComplaints")]
         
         public async Task<IActionResult> GetAllComplaints()
         {
-            var listComplaints = await _complaintRepository.GetAllComplaints();
+            var listComplaints = await _complaintService.GetAllComplaintsAsync();
             return Ok(listComplaints);
         }
 
         [HttpGet("GetComplaintById/{id}")]
         public async Task<IActionResult> GetComplaintById(string idComplaint)
         {
-            var complaint = await _complaintRepository.GetComplaintById(idComplaint);
+            var complaint = await _complaintService.GetComplaintByIdAsync(idComplaint);
             return Ok(complaint);
         }
 
         [HttpPost("CreateComplaint")]
         public async Task<IActionResult> CreateComplaint(Complaint complaint)
         {
-            await _complaintRepository.CreateComplaint(complaint);
+            await _complaintService.CreateComplaintAsync(complaint);
             return Ok();
         }
 
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(string idComplaint, Complaint complaint)
         {
-            await _complaintRepository.UpdateComplaitAsync(idComplaint, complaint);
+            await _complaintService.UpdateComplaintAsync(idComplaint, complaint);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComplaint(string idComplaint)
         {
-            await _complaintRepository.DeleteComplaintAsync(idComplaint);
+            await _complaintService.DeleteComplaintAsync(idComplaint);
             return Ok();
         }
     }

@@ -9,8 +9,6 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
 {
     class VeicleConfiguration : IMongoEntityConfiguration<Vehicle>
     {
-        // arquivo de configuração de entidade de teste de integração com o mongo
-
         public void Configure(BsonClassMap<Vehicle> classMap)
         {
             classMap.AutoMap();

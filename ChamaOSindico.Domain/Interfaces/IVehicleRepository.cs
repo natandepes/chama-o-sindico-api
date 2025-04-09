@@ -6,9 +6,9 @@ namespace ChamaOSindico.Domain.Interfaces
 
         public interface IVehicleRepository
         {
-                Task<List<Vehicle>> GetAllVehicles();
-                Task<Vehicle> GetVehicleById(string idVehicle);
-                Task CreateVehicle(Vehicle vehicle);
+                Task<List<Vehicle>> GetAllVehiclesAsync();
+                Task<Vehicle> GetVehicleByIdAsync(string idVehicle);
+                Task CreateVehicleAsync(Vehicle vehicle);
                 Task UpdateVehicleAsync(string idVehicle, Vehicle vehicle);
                 Task DeleteVehicleAsync(string idVehicle);
         }

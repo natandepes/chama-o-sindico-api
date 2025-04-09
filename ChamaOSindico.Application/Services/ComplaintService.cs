@@ -1,3 +1,4 @@
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 
@@ -15,9 +16,9 @@ namespace ChamaOSindico.Application.Service
             _complaintRepository = complaintRepository;
         }
 
-        public Task CreateComplaint(Complaint complaint)
+        public Task CreateComplaintAsync(Complaint complaint)
         {
-            return _complaintRepository.CreateComplaint(complaint);
+            return _complaintRepository.CreateComplaintAsync(complaint);
         }
 
         public Task DeleteComplaintAsync(string idComplaint)
@@ -25,14 +26,14 @@ namespace ChamaOSindico.Application.Service
             return _complaintRepository.DeleteComplaintAsync(idComplaint);
         }
 
-        public Task<List<Complaint>> GetAllComplaints()
+        public Task<List<Complaint>> GetAllComplaintsAsync()
         {
-            return _complaintRepository.GetAllComplaints();
+            return _complaintRepository.GetAllComplaintsAsync();
         }
 
-        public Task<Complaint> GetComplaintById(string idComplaint)
+        public Task<Complaint> GetComplaintByIdAsync(string idComplaint)
         {
-            return _complaintRepository.GetComplaintById(idComplaint);
+            return _complaintRepository.GetComplaintByIdAsync(idComplaint);
         }
 
         public Task UpdateComplaintAsync(string idComplaint, Complaint complaint)

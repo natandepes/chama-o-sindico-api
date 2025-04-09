@@ -1,4 +1,9 @@
-﻿using ChamaOSindico.Infra.ConfigurationFiles;
+﻿using ChamaOSindico.Application.Auth;
+using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.Application.Service;
+using ChamaOSindico.Application.Services;
+using ChamaOSindico.Domain.Interfaces;
+using ChamaOSindico.Infra.ConfigurationFiles;
 using ChamaOSindico.Infra.Context;
 using ChamaOSindico.Infra.Interfaces;
 using ChamaOSindico.Infra.Repository;
@@ -44,17 +49,16 @@ namespace ChamaOSindico.IoC
 
             // Register Repositories
             services.AddScoped<TesteIntegracaoRepository>();
-            
-            
-            services.AddScoped<ComplaintRepository>();
-            services.AddScoped<VehicleRepository>();
-
+            services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
 
             // Register Services
             services.AddScoped<AuthService>();
             services.AddScoped<JwtService>();
+            services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IComplaintService, ComplaintService>();
 
             // Register Auth + JWT middleware
             services.AddJwtAuthentication(configuration);

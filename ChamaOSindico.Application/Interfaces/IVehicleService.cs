@@ -1,15 +1,13 @@
-
-
 using ChamaOSindico.Domain.Entities;
 
-namespace ChamaOSindico.Application.Service
+namespace ChamaOSindico.Application.Interfaces
 {
 
     public interface IVehicleService
     {
-                Task<List<Vehicle>> GetAllVehicles();
-                Task<Vehicle> GetVehicleById(string id);
-                Task CreateVehicle(Vehicle vehicle);
+                Task<List<Vehicle>> GetAllVehiclesAsync();
+                Task<Vehicle> GetVehicleByIdAsync(string id);
+                Task CreateVehicleAsync(Vehicle vehicle);
                 Task UpdateVehicleAsync(string idVehicle, Vehicle vehicle);
                 Task DeleteVehicleAsync(string idVehicle);
         
