@@ -1,7 +1,6 @@
-﻿using ChamaOSindico.Application.Services;
-using ChamaOSindico.Infra.Interfaces;
+﻿using ChamaOSindico.Application.DTOs.Auth;
+using ChamaOSindico.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
@@ -9,26 +8,24 @@ namespace ChamaOSindico.WebAPI.Controllers
     [Route("/api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
-        private readonly ITokenBlackListRepository _tokenBlackListRepository;
+        private readonly IAuthService _authService;
 
-        public AuthController(AuthService authService, ITokenBlackListRepository tokenBlackListRepository)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _tokenBlackListRepository = tokenBlackListRepository;
         }
 
         [HttpPost(nameof(RegisterUser))]
-        public async Task<IActionResult> RegisterUser([FromBody] AuthDto auth)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
         {
-            var token = await _authService.RegisterUserAsync(auth.email, auth.password, auth.role);
+            var token = await _authService.RegisterUserAsync(registerUserDto);
             return Ok(new {token});
         }
 
         [HttpPost(nameof(LoginUser))]
-        public async Task<IActionResult> LoginUser([FromBody] AuthDto auth)
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
         {
-            var token = await _authService.LoginAsync(auth.email, auth.password);
+            var token = await _authService.LoginAsync(loginUserDto);
             return Ok(new {token});
         }
 
@@ -36,21 +33,16 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> LogoutUser()
         {
             var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-            
+
             if (authHeader == null || !authHeader.StartsWith("Bearer "))
-            {
                 return BadRequest("Token not provided.");
-            }
-                
+
             var token = authHeader.Substring("Bearer ".Length).Trim();
 
             try
             {
-                var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                var expiration = jwtToken.ValidTo;
-
-                await _tokenBlackListRepository.AddTokenToBlackListAsync(token, expiration);
-                return Ok(new { message = "Successfully logged out." });
+                await _authService.LogoutAsync(token);
+                return Ok("Successfully logged out.");
             }
             catch
             {
@@ -58,6 +50,4 @@ namespace ChamaOSindico.WebAPI.Controllers
             }
         }
     }
-
-    public record AuthDto(string email, string password, string? role);
 }

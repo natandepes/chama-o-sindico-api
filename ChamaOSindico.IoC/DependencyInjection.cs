@@ -51,17 +51,15 @@ namespace CleanArchMvc.Infra.IoC
             services.AddScoped<TesteIntegracaoRepository>();
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
-            services.AddScoped<ComplaintRepository>();
-            services.AddScoped<VehicleRepository>();
-
-            services.AddScoped<UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
 
             // Register Services
-            services.AddScoped<AuthService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<JwtService>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IComplaintService, ComplaintService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))
