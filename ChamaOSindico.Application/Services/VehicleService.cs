@@ -1,3 +1,4 @@
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 
@@ -15,9 +16,9 @@ namespace ChamaOSindico.Application.Service
             _vehicleRepository = vehicleRepository;
         }
 
-        public Task CreateVehicle(Vehicle vehicle)
+        public Task CreateVehicleAsync(Vehicle vehicle)
         {
-            return _vehicleRepository.CreateVehicle(vehicle);
+            return _vehicleRepository.CreateVehicleAsync(vehicle);
         }
 
         public Task DeleteVehicleAsync(string idVehicle)
@@ -25,14 +26,14 @@ namespace ChamaOSindico.Application.Service
             return _vehicleRepository.DeleteVehicleAsync(idVehicle);
         }
 
-        public Task<List<Vehicle>> GetAllVehicles()
+        public Task<List<Vehicle>> GetAllVehiclesAsync()
         {
-            return _vehicleRepository.GetAllVehicles();
+            return _vehicleRepository.GetAllVehiclesAsync();
         }
 
-        public Task<Vehicle> GetVehicleById(string idVehicle)
+        public Task<Vehicle> GetVehicleByIdAsync(string idVehicle)
         {
-            return _vehicleRepository.GetVehicleById(idVehicle);
+            return _vehicleRepository.GetVehicleByIdAsync(idVehicle);
         }
 
         public Task UpdateVehicleAsync(string idVehicle, Vehicle vehicle)

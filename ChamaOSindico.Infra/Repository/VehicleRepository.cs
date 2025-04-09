@@ -1,10 +1,11 @@
 ﻿using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.Context;
 using MongoDB.Driver;
 
 namespace ChamaOSindico.Infra.Repository
 {
-    public class VehicleRepository
+    public class VehicleRepository : IVehicleRepository
     {
 
         private readonly IMongoCollection<Vehicle> _context;
@@ -14,17 +15,17 @@ namespace ChamaOSindico.Infra.Repository
             _context = context.GetCollection<Vehicle>();
         }
 
-        public async Task<List<Vehicle>> GetAllVehicles()
+        public async Task<List<Vehicle>> GetAllVehiclesAsync()
         {
             return await _context.Find(_ => true).ToListAsync();
         }
 
-        public async Task<Vehicle> GetVehicleById(string idVehicle)
+        public async Task<Vehicle> GetVehicleByIdAsync(string idVehicle)
         {
             return await _context.Find(v => v.Id == idVehicle).FirstOrDefaultAsync();
         }
 
-        public async Task CreateVehicle(Vehicle vehicle)
+        public async Task CreateVehicleAsync(Vehicle vehicle)
         {
             await _context.InsertOneAsync(vehicle);
         }

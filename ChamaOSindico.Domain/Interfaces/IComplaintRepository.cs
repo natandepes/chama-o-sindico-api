@@ -5,9 +5,9 @@ namespace ChamaOSindico.Domain.Interfaces
 
         public interface IComplaintRepository
         {
-                Task<List<Complaint>> GetAllComplaints();
-                Task<Complaint> GetComplaintById(string id);
-                Task CreateComplaint(Complaint complaint);
+                Task<List<Complaint>> GetAllComplaintsAsync();
+                Task<Complaint> GetComplaintByIdAsync(string id);
+                Task CreateComplaintAsync(Complaint complaint);
                 Task UpdateComplaintAsync(string idcomplaint, Complaint complaint);
                 Task DeleteComplaintAsync(string idcomplaint);
         }
