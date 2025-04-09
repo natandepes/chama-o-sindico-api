@@ -1,6 +1,4 @@
-﻿using ChamaOSindico.Application.Auth;
-using ChamaOSindico.Application.Services;
-using ChamaOSindico.Infra.ConfigurationFiles;
+﻿using ChamaOSindico.Infra.ConfigurationFiles;
 using ChamaOSindico.Infra.Context;
 using ChamaOSindico.Infra.Interfaces;
 using ChamaOSindico.Infra.Repository;
@@ -46,6 +44,11 @@ namespace ChamaOSindico.IoC
 
             // Register Repositories
             services.AddScoped<TesteIntegracaoRepository>();
+            
+            
+            services.AddScoped<ComplaintRepository>();
+            services.AddScoped<VehicleRepository>();
+
             services.AddScoped<UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
 
