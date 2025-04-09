@@ -1,11 +1,12 @@
-﻿using ChamaOSindico.Application.DTOs.Auth;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.DTOs.Auth;
 
 namespace ChamaOSindico.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> RegisterUserAsync(RegisterUserDto registerUserDto);
-        Task<string> LoginAsync(LoginUserDto loginUserDto);
-        Task LogoutAsync(string token);
+        Task<ApiResponse<string>> RegisterUserAsync(RegisterUserDto registerUserDto);
+        Task<ApiResponse<string>> LoginAsync(LoginUserDto loginUserDto);
+        Task<ApiResponse<string>> LogoutAsync(string token);
     }
 }
