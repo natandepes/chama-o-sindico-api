@@ -1,4 +1,4 @@
-﻿using ChamaOSindico.Infra.Repository;
+﻿using ChamaOSindico.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,10 +10,11 @@ namespace ChamaOSindico.WebAPI.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        public UserController(UserRepository userRepository)
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpGet(nameof(GetUserDetails))]
@@ -28,21 +29,14 @@ namespace ChamaOSindico.WebAPI.Controllers
             }
                 
             // Fetch user from repository
-            var user = await _userRepository.GetUserByEmailAsync(email);
+            var user = await _userService.GetUserByEmailAsync(email);
+
             if (user == null)
             {
                 return NotFound("User not found");
             } 
 
-            // Return sanitized user data (no password hash!)
-            var userDto = new
-            {
-                user.Id,
-                user.Email,
-                user.Role
-            };
-
-            return Ok(userDto);
+            return Ok(user);
         }
     }
 }

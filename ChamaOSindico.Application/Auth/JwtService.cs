@@ -1,4 +1,4 @@
-﻿using ChamaOSindico.Domain.Entities;
+﻿using ChamaOSindico.Application.DTOs.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,13 +16,13 @@ namespace ChamaOSindico.Application.Auth
             _config = config;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(AuthUserDto user)
         {
             var claims = new[]
             {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

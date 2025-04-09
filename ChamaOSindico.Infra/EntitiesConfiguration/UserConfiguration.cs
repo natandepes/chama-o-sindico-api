@@ -1,4 +1,5 @@
 ﻿using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Infra.ConfigurationFiles;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -16,6 +17,10 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             classMap.MapIdMember(c => c.Id)
                 .SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance)
                 .SetSerializer(new StringSerializer(BsonType.ObjectId));
+
+            classMap.MapMember(c => c.Role)
+                .SetSerializer(new EnumSerializer<UserRoleEnum>(BsonType.String))
+                .SetIsRequired(true);
         }
     }
 }
