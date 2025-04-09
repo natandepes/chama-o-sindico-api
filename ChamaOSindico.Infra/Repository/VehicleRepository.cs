@@ -20,6 +20,11 @@ namespace ChamaOSindico.Infra.Repository
             return await _context.Find(_ => true).ToListAsync();
         }
 
+        public async Task<List<Vehicle>> GetAllVehiclesByUserIdAsync(string userId)
+        {
+            return await _context.Find(v => v.CreatedByUserId == userId).ToListAsync();
+        }
+
         public async Task<Vehicle> GetVehicleByIdAsync(string idVehicle)
         {
             return await _context.Find(v => v.Id == idVehicle).FirstOrDefaultAsync();

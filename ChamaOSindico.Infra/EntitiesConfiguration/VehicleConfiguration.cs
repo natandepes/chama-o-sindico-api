@@ -25,7 +25,11 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             
             classMap.MapMember(v => v.VehicleType)
                 .SetIsRequired(true)
-                .SetSerializer(new EnumSerializer<VehicleTypeEnum>(BsonType.String)); 
+                .SetSerializer(new EnumSerializer<VehicleTypeEnum>(BsonType.String));
+
+            classMap.MapMember(v => v.CreatedByUserId)
+                .SetIsRequired(true)
+                .SetSerializer(new StringSerializer(BsonType.ObjectId));
         }
     }
 }

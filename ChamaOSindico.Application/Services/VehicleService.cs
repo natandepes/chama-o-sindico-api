@@ -26,6 +26,11 @@ namespace ChamaOSindico.Application.Service
             return _vehicleRepository.DeleteVehicleAsync(idVehicle);
         }
 
+        public Task<List<Vehicle>> GetAllVehiclesByUserIdAsync(string userId)
+        {
+            return _vehicleRepository.GetAllVehiclesByUserIdAsync(userId);
+        }
+
         public Task<List<Vehicle>> GetAllVehiclesAsync()
         {
             return _vehicleRepository.GetAllVehiclesAsync();

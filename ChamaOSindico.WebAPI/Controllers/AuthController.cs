@@ -1,6 +1,8 @@
-﻿using ChamaOSindico.Application.DTOs.Auth;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.DTOs.Auth;
 using ChamaOSindico.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
@@ -18,15 +20,15 @@ namespace ChamaOSindico.WebAPI.Controllers
         [HttpPost(nameof(RegisterUser))]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto registerUserDto)
         {
-            var token = await _authService.RegisterUserAsync(registerUserDto);
-            return Ok(new {token});
+            var response = await _authService.RegisterUserAsync(registerUserDto);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpPost(nameof(LoginUser))]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
         {
-            var token = await _authService.LoginAsync(loginUserDto);
-            return Ok(new {token});
+            var response = await _authService.LoginAsync(loginUserDto);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpPost(nameof(LogoutUser))]
@@ -35,19 +37,15 @@ namespace ChamaOSindico.WebAPI.Controllers
             var authHeader = Request.Headers["Authorization"].FirstOrDefault();
 
             if (authHeader == null || !authHeader.StartsWith("Bearer "))
-                return BadRequest("Token not provided.");
-
-            var token = authHeader.Substring("Bearer ".Length).Trim();
-
-            try
             {
-                await _authService.LogoutAsync(token);
-                return Ok("Successfully logged out.");
+                var error = ApiResponse<string>.ErrorResult("Token not provided.", HttpStatusCode.BadRequest);
+                return StatusCode(error.StatusCode, error);
             }
-            catch
-            {
-                return BadRequest("Invalid token.");
-            }
+
+            var token = authHeader["Bearer ".Length..].Trim();
+
+            var result = await _authService.LogoutAsync(token);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

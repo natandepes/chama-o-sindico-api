@@ -1,10 +1,12 @@
 ﻿using ChamaOSindico.Application.Auth;
+using ChamaOSindico.Application.Commom;
 using ChamaOSindico.Application.DTOs.Auth;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Security;
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace ChamaOSindico.Application.Services
 {
@@ -23,13 +25,13 @@ namespace ChamaOSindico.Application.Services
             _userService = userService;
         }
 
-        public async Task<string> RegisterUserAsync(RegisterUserDto registerUserDto)
+        public async Task<ApiResponse<string>> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
             var existing = await _userRepository.GetUserByEmailAsync(registerUserDto.Email);
 
             if (existing != null)
             {
-                throw new Exception("User already exists");
+                return ApiResponse<string>.ErrorResult("User already exists", HttpStatusCode.Conflict);
             }
 
             var createdUser = await _userService.CreateUserAsync(registerUserDto);
@@ -41,17 +43,25 @@ namespace ChamaOSindico.Application.Services
                 Role = createdUser.Role
             };
             
-            return _jwtService.GenerateToken(authDto);
+            var token =  _jwtService.GenerateToken(authDto);
+
+            return ApiResponse<string>.SuccessResult(token, "User registered successfully.");
         }
 
-        public async Task<string> LoginAsync(LoginUserDto loginUserDto)
+        public async Task<ApiResponse<string>> LoginAsync(LoginUserDto loginUserDto)
         {
             var user = await _userService.GetUserByEmailAsync(loginUserDto.Email);
+
+            if (user == null)
+            {
+                return ApiResponse<string>.ErrorResult("The e-mail provided does not exists.", HttpStatusCode.Unauthorized);
+            }
+
             var userHashedPassword = await _userRepository.GetUserHashedPassword(user.Id);
 
-            if (user == null || !PasswordHasher.Verify(loginUserDto.Password, userHashedPassword))
+            if (!PasswordHasher.Verify(loginUserDto.Password, userHashedPassword))
             {
-                throw new UnauthorizedAccessException("Invalid credentials");
+                return ApiResponse<string>.ErrorResult("Invalid password.", HttpStatusCode.Unauthorized);
             }
 
             userHashedPassword = null; // Clear password hash for security reasons
@@ -63,15 +73,25 @@ namespace ChamaOSindico.Application.Services
                 Role = user.Role.ToString()
             };
 
-            return _jwtService.GenerateToken(authDto);
+            var token = _jwtService.GenerateToken(authDto);
+
+            return ApiResponse<string>.SuccessResult(token, "Login successful.");
         }
 
-        public async Task LogoutAsync(string token)
+        public async Task<ApiResponse<string>> LogoutAsync(string token)
         {
-            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-            var expiration = jwtToken.ValidTo;
+            try
+            {
+                var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                var expiration = jwtToken.ValidTo;
 
-            await _tokenBlacklistRepository.AddTokenToBlackListAsync(token, expiration);
+                await _tokenBlacklistRepository.AddTokenToBlackListAsync(token, expiration);
+                return ApiResponse<string>.SuccessResult(null, "Successfully logged out.");
+            }
+            catch
+            {
+                return ApiResponse<string>.ErrorResult("Invalid token.", System.Net.HttpStatusCode.BadRequest);
+            }
         }
     }
 }

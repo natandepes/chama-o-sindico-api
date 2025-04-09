@@ -53,6 +53,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseCors("AllowAngularClient");
+app.UseMiddleware<ApiResponseWrapperMiddleware>();
 
 app.UseAuthentication();
 app.UseMiddleware<JwtValidationMiddleware>();

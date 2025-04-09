@@ -8,5 +8,6 @@ namespace ChamaOSindico.Domain.Entities
         public string? Model { get; set; }
         public VehicleColorEnum Color { get; set; }
         public VehicleTypeEnum VehicleType { get; set; }
+        public string? CreatedByUserId { get; set; }
     }
 }
