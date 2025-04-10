@@ -1,4 +1,5 @@
-﻿using ChamaOSindico.Application.Interfaces;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -30,12 +31,6 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> GetAllVehiclesByUserId()
         {
             var userId = User.GetUserId();
-            
-            if (userId == null)
-            {
-                return StatusCode(401, "User not authenticated.");
-            }
-            
             var listVehicles = await _vehicleService.GetAllVehiclesByUserIdAsync(userId);
             return Ok(listVehicles);
         }
@@ -44,10 +39,6 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> GetVehicleById(string id)
         {
             var userId = User.GetUserId();
-            if (userId == null)
-            {
-                return StatusCode(401, "User not authenticated.");
-            }
 
             var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
 
@@ -68,21 +59,21 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> CreateVehicle(Vehicle vehicle)
         {
             await _vehicleService.CreateVehicleAsync(vehicle);
-            return Ok();
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle created successfully."));
         }
 
         [HttpPut(nameof(Update) + "/{id}")]
         public async Task<IActionResult> Update(string id, Vehicle vehicle)
         {
             await _vehicleService.UpdateVehicleAsync(id, vehicle);
-            return Ok();
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle updated successfully."));
         }
 
         [HttpDelete(nameof(DeleteVehicle) + "/{id}")]
         public async Task<IActionResult> DeleteVehicle(string id)
         {
             await _vehicleService.DeleteVehicleAsync(id);
-            return Ok();
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle deleted successfully."));
         }
     }
 }

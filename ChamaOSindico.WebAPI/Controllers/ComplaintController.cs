@@ -1,11 +1,14 @@
-﻿using ChamaOSindico.Application.Interfaces;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ComplaintController : ControllerBase
     {   
         private readonly IComplaintService _complaintService;
@@ -15,40 +18,39 @@ namespace ChamaOSindico.WebAPI.Controllers
             _complaintService = complaintService;
         }
 
-        [HttpGet("GetAllComplaints")]
-        
+        [HttpGet(nameof(GetAllComplaints))]
         public async Task<IActionResult> GetAllComplaints()
         {
             var listComplaints = await _complaintService.GetAllComplaintsAsync();
             return Ok(listComplaints);
         }
 
-        [HttpGet("GetComplaintById/{id}")]
-        public async Task<IActionResult> GetComplaintById(string idComplaint)
+        [HttpGet(nameof(GetComplaintById) + "/{id}")]
+        public async Task<IActionResult> GetComplaintById(string id)
         {
-            var complaint = await _complaintService.GetComplaintByIdAsync(idComplaint);
+            var complaint = await _complaintService.GetComplaintByIdAsync(id);
             return Ok(complaint);
         }
 
-        [HttpPost("CreateComplaint")]
+        [HttpPost(nameof(CreateComplaint))]
         public async Task<IActionResult> CreateComplaint(Complaint complaint)
         {
             await _complaintService.CreateComplaintAsync(complaint);
-            return Ok();
+            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint created successfully."));
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(string idComplaint, Complaint complaint)
+        [HttpPut(nameof(Update) + "/{id}")]
+        public async Task<IActionResult> Update(string id, Complaint complaint)
         {
-            await _complaintService.UpdateComplaintAsync(idComplaint, complaint);
-            return Ok();
+            await _complaintService.UpdateComplaintAsync(id, complaint);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint updated successfully."));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComplaint(string idComplaint)
+        [HttpDelete(nameof(DeleteComplaint) + "/{id}")]
+        public async Task<IActionResult> DeleteComplaint(string id)
         {
-            await _complaintService.DeleteComplaintAsync(idComplaint);
-            return Ok();
+            await _complaintService.DeleteComplaintAsync(id);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint deleted successfully."));
         }
     }
 }
