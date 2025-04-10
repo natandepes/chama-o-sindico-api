@@ -53,6 +53,8 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
+            services.AddScoped<IAreaRepository, AreaRepository>();
+            services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
 
             // Register Services
             services.AddScoped<IAuthService, AuthService>();
@@ -60,6 +62,7 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAreaService, AreaService>();
 
             // Register Auth + JWT middleware
             services.AddJwtAuthentication(configuration);
