@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoFramework;
 using System.Text;
 
-namespace CleanArchMvc.Infra.IoC
+namespace ChamaOSindico.IoC
 {
     public static class DependencyInjection
     {
