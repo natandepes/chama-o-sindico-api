@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoFramework;
 
-namespace ChamaOSindico.IoC
+namespace CleanArchMvc.Infra.IoC
 {
     public static class DependencyInjection
     {
@@ -29,6 +29,9 @@ namespace ChamaOSindico.IoC
             services.AddScoped<TesteIntegracaoRepository>();
 
             // Register Services
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))
+            );
 
             return services;
         }
