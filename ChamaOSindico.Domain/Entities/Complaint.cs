@@ -10,5 +10,7 @@ namespace ChamaOSindico.Domain.Entities
         public ComplaintStatusEnum Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
+        public string? CreatedByUserId { get; set; }
+        public string? ClosedByUserId { get; set; }
     }
 }

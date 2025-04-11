@@ -17,4 +17,12 @@
     <ProjectReference Include="..\ChamaOSindico.Infra\ChamaOSindico.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+  </ItemGroup>
+
 </Project>

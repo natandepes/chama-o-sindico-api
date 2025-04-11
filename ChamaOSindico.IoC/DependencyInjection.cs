@@ -1,6 +1,9 @@
 ﻿using ChamaOSindico.Application.Auth;
 using ChamaOSindico.Application.Interfaces;
-using ChamaOSindico.Application.Service;
+using ChamaOSindico.Application.Services;
+using ChamaOSindico.Domain.Interfaces;
+using ChamaOSindico.Application.Auth;
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Services;
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.ConfigurationFiles;
@@ -59,10 +62,12 @@ namespace ChamaOSindico.IoC
             // Register Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<JwtService>();
-            services.AddScoped<IVehicleService, VehicleService>();
-            services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAreaService, AreaService>();
+
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))
+            );
 
             // Register Auth + JWT middleware
             services.AddJwtAuthentication(configuration);
