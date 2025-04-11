@@ -1,6 +1,8 @@
 ﻿using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Infra.ConfigurationFiles;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace ChamaOSindico.Infra.EntitiesConfiguration
 {
@@ -29,6 +31,7 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
                 .SetIsRequired(true);
             
             classMap.MapMember(p => p.UserId)
+                .SetSerializer(new StringSerializer(BsonType.ObjectId))
                 .SetIsRequired(false);
         }
     }
