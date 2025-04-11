@@ -66,6 +66,8 @@ namespace ChamaOSindico.IoC
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
             services.AddScoped<IResidentRepository, ResidentRepository>();
             services.AddScoped<ITransactionService, MongoTransactionService>();
+            services.AddScoped<IResidentRepository, ResidentRepository>();
+            services.AddScoped<ITransactionService, MongoTransactionService>();
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
 
