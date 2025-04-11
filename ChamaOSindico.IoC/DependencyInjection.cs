@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using MongoFramework;
 using System.Text;
 
@@ -23,14 +24,21 @@ namespace ChamaOSindico.IoC
             var connectionString = configuration.GetValue<string>("MongoDbSettings:ConnectionString");
             var databaseName = configuration.GetValue<string>("MongoDbSettings:DatabaseName");
 
-            // Register MongoDB Context
-            services.AddSingleton<MongoAppDbContext>(sp => new MongoAppDbContext(connectionString, databaseName));
-
-            // Register MongoDB Connection
-            services.AddSingleton<IMongoDbConnection>(sp =>
+            services.AddSingleton<IMongoClient>(sp =>
             {
-                var settings = sp.GetRequiredService<MongoDbSettings>();
-                return MongoDbConnection.FromConnectionString($"{settings.ConnectionString}/{settings.DatabaseName}");
+                var config = sp.GetRequiredService<IConfiguration>();
+                var connectionString = config.GetValue<string>("MongoDbSettings:ConnectionString");
+                return new MongoClient(connectionString);
+            });
+
+            // Register MongoDB Context
+            services.AddSingleton<MongoAppDbContext>(sp =>
+            {
+                var config = sp.GetRequiredService<IConfiguration>();
+                var client = sp.GetRequiredService<IMongoClient>();
+                var databaseName = config.GetValue<string>("MongoDbSettings:DatabaseName");
+
+                return new MongoAppDbContext(client, databaseName);
             });
 
             services.AddCors(options =>
@@ -52,6 +60,8 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
+            services.AddScoped<IResidentRepository, ResidentRepository>();
+            services.AddScoped<ITransactionService, MongoTransactionService>();
 
             // Register Services
             services.AddScoped<IAuthService, AuthService>();
