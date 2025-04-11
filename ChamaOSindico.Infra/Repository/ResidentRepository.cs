@@ -31,5 +31,25 @@ namespace ChamaOSindico.Infra.Repository
             var update = Builders<Resident>.Update.Set(r => r.UserId, userId);
             return _context.UpdateOneAsync(r => r.Id == residentId, update);
         }
+
+        public async Task<List<Resident>> GetAllResidentsAsync()
+        {
+            return await _context.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<Resident?> GetResidentByIdAsync(string id)
+        {
+            return await _context.Find(r => r.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateResident(string id, Resident resident)
+        {
+            await _context.ReplaceOneAsync(r => r.Id == id, resident);
+        }
+
+        public async Task DeleteResident(string id)
+        {
+            await _context.DeleteOneAsync(r => r.Id == id);
+        }
     }
 }

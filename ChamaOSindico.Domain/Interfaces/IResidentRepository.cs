@@ -6,5 +6,10 @@ namespace ChamaOSindico.Domain.Interfaces
     {
         Task CreateResidentAsync(Resident resident);
         Task AssignUserIdToResidentAsync(string residentId, string userId);
+
+        Task<List<Resident>> GetAllResidentsAsync();
+        Task<Resident?> GetResidentByIdAsync(string id);
+        Task UpdateResident(string id, Resident resident);
+        Task DeleteResident(string id);
     }
 }
