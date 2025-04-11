@@ -39,6 +39,10 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> GetVehicleById(string id)
         {
             var userId = User.GetUserId();
+            if (userId == null)
+            {
+                return StatusCode(401, "User not authenticated.");
+            }
 
             var vehicle = await _vehicleRepository.GetVehicleByIdAsync(id);
 

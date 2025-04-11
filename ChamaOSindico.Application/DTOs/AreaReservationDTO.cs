@@ -1,10 +1,10 @@
 ﻿using ChamaOSindico.Domain.Enums;
 
-namespace ChamaOSindico.Domain.Entities
+namespace ChamaOSindico.Application.DTOs
 {
-    public class AreaReservation : BaseEntity
+    public class AreaReservationDTO
     {
-  
+        public string? Id { get; set; }
         public string? AreaId { get; set; }
         public string? CreatedByUserId { get; set; }
         public DateTime StartDate { get; set; }

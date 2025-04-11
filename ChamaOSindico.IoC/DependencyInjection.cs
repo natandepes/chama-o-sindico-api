@@ -2,6 +2,10 @@
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Services;
 using ChamaOSindico.Domain.Interfaces;
+using ChamaOSindico.Application.Auth;
+using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.Application.Services;
+using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.ConfigurationFiles;
 using ChamaOSindico.Infra.Context;
 using ChamaOSindico.Infra.Interfaces;
@@ -52,11 +56,14 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
+            services.AddScoped<IAreaRepository, AreaRepository>();
+            services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
 
             // Register Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<JwtService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAreaService, AreaService>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))
