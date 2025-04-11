@@ -12,10 +12,11 @@ namespace ChamaOSindico.Infra.Context
     public class MongoAppDbContext
     {
         private readonly IMongoDatabase _database;
+        private readonly IMongoClient _client;
 
-        public MongoAppDbContext(string connectionString, string databaseName)
+        public MongoAppDbContext(IMongoClient client, string databaseName)
         {
-            var client = new MongoClient(connectionString);
+            _client = client;
             _database = client.GetDatabase(databaseName);
             ApplyConfigurations();
         }

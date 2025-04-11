@@ -16,24 +16,16 @@ namespace ChamaOSindico.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserResponseDto> CreateUserAsync(RegisterUserDto userDto)
+        public async Task<UserResponseDto> CreateUserAsync(User newUser)
         {
-            var user = new User
-            {
-                Email = userDto.Email,
-                PasswordHash = PasswordHasher.Hash(userDto.Password),
-                Role = userDto.Role,
-                PersonId = userDto.PersonId
-            };
-
-            await _userRepository.CreateUserAsync(user);
+            await _userRepository.CreateUserAsync(newUser);
 
             return new UserResponseDto
             {
-                Id = user.Id,
-                Email = user.Email,
-                Role = user.Role.ToString(),
-                PersonId = user.PersonId
+                Id = newUser.Id,
+                Email = newUser.Email,
+                Role = newUser.Role.ToString(),
+                PersonId = newUser.PersonId
             };
         }
 
