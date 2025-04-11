@@ -42,12 +42,12 @@ namespace ChamaOSindico.Infra.Repository
             return await _context.Find(r => r.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task UpdateResident(string id, Resident resident)
+        public async Task UpdateResidentAsync(string id, Resident resident)
         {
             await _context.ReplaceOneAsync(r => r.Id == id, resident);
         }
 
-        public async Task DeleteResident(string id)
+        public async Task DeleteResidentAsync(string id)
         {
             await _context.DeleteOneAsync(r => r.Id == id);
         }

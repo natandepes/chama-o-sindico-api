@@ -19,16 +19,16 @@ namespace ChamaOSindico.WebAPI.Controllers
         }
 
         [HttpGet(nameof(GetAll))]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var listResidents = _residentRepository.GetAllResidentsAsync().Result;
+            var listResidents = await _residentRepository.GetAllResidentsAsync();
             return Ok(listResidents);
         }
 
         [HttpGet(nameof(GetById) + "/{id}")]
-        public IActionResult GetById(string id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var resident = _residentRepository.GetResidentByIdAsync(id).Result;
+            var resident = await _residentRepository.GetResidentByIdAsync(id);
             
             if (resident == null)
             {
@@ -39,30 +39,30 @@ namespace ChamaOSindico.WebAPI.Controllers
         }
 
         [HttpPut(nameof(Update) + "/{id}")]
-        public IActionResult Update(string id, Resident resident)
+        public async Task<IActionResult> Update(string id, Resident resident)
         {
-            var existingResident = _residentRepository.GetResidentByIdAsync(id).Result;
+            var existingResident = await _residentRepository.GetResidentByIdAsync(id);
             
             if (existingResident == null)
             {
                 return NotFound("Resident not found.");
             }
             
-            _residentRepository.UpdateResident(id, resident);
+            await _residentRepository.UpdateResidentAsync(id, resident);
             return Ok(ApiResponse<string>.SuccessResult(null, "Resident updated successfully."));
         }
 
         [HttpDelete(nameof(Delete) + "/{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            var existingResident = _residentRepository.GetResidentByIdAsync(id).Result;
+            var existingResident = await _residentRepository.GetResidentByIdAsync(id);
 
             if (existingResident == null)
             {
                 return NotFound("Resident not found.");
             }
 
-            _residentRepository.DeleteResident(id);
+            await _residentRepository.DeleteResidentAsync(id);
             return Ok(ApiResponse<string>.SuccessResult(null, "Resident deleted successfully."));
         }
     }
