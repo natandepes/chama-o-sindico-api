@@ -1,5 +1,6 @@
-﻿using ChamaOSindico.Application.Interfaces;
+﻿using ChamaOSindico.Application.Commom;
 using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +12,18 @@ namespace ChamaOSindico.WebAPI.Controllers
     [Authorize]
     public class VehicleController : ControllerBase
     {   
-        private readonly IVehicleService _vehicleService;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public VehicleController(IVehicleService vehicleService)
+        public VehicleController(IVehicleRepository vehicleRepository)
         {
-            _vehicleService = vehicleService;
+            _vehicleRepository = vehicleRepository;
         }
 
         [HttpGet(nameof(GetAllVehicles))]
         
         public async Task<IActionResult> GetAllVehicles()
         {
-            var listVehicles = await _vehicleService.GetAllVehiclesAsync();
+            var listVehicles = await _vehicleRepository.GetAllVehiclesAsync();
             return Ok(listVehicles);
         }
 
@@ -30,13 +31,7 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> GetAllVehiclesByUserId()
         {
             var userId = User.GetUserId();
-            
-            if (userId == null)
-            {
-                return StatusCode(401, "User not authenticated.");
-            }
-            
-            var listVehicles = await _vehicleService.GetAllVehiclesByUserIdAsync(userId);
+            var listVehicles = await _vehicleRepository.GetAllVehiclesByUserIdAsync(userId);
             return Ok(listVehicles);
         }
 
@@ -49,7 +44,7 @@ namespace ChamaOSindico.WebAPI.Controllers
                 return StatusCode(401, "User not authenticated.");
             }
 
-            var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+            var vehicle = await _vehicleRepository.GetVehicleByIdAsync(id);
 
             if (vehicle == null)
             {
@@ -67,22 +62,22 @@ namespace ChamaOSindico.WebAPI.Controllers
         [HttpPost(nameof(CreateVehicle))]
         public async Task<IActionResult> CreateVehicle(Vehicle vehicle)
         {
-            await _vehicleService.CreateVehicleAsync(vehicle);
-            return Ok();
+            await _vehicleRepository.CreateVehicleAsync(vehicle);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle created successfully."));
         }
 
         [HttpPut(nameof(Update) + "/{id}")]
         public async Task<IActionResult> Update(string id, Vehicle vehicle)
         {
-            await _vehicleService.UpdateVehicleAsync(id, vehicle);
-            return Ok();
+            await _vehicleRepository.UpdateVehicleAsync(id, vehicle);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle updated successfully."));
         }
 
         [HttpDelete(nameof(DeleteVehicle) + "/{id}")]
         public async Task<IActionResult> DeleteVehicle(string id)
         {
-            await _vehicleService.DeleteVehicleAsync(id);
-            return Ok();
+            await _vehicleRepository.DeleteVehicleAsync(id);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle deleted successfully."));
         }
     }
 }

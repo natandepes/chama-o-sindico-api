@@ -3,6 +3,10 @@ using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Service;
 using ChamaOSindico.Application.Services;
 using ChamaOSindico.Domain.Interfaces;
+using ChamaOSindico.Application.Auth;
+using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.Application.Services;
+using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.ConfigurationFiles;
 using ChamaOSindico.Infra.Context;
 using ChamaOSindico.Infra.Interfaces;
@@ -63,6 +67,36 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAreaService, AreaService>();
+
+            // Register Auth + JWT middleware
+            services.AddJwtAuthentication(configuration);
+
+            return services;
+        }
+
+        private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+                        ValidAudience = configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    };
+                });
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<JwtService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))
+            );
 
             // Register Auth + JWT middleware
             services.AddJwtAuthentication(configuration);
