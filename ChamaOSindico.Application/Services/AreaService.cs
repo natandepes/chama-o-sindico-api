@@ -87,7 +87,7 @@ namespace ChamaOSindico.Application.Services
             {
                 Id = areaReservationDTO.Id ?? "",
                 AreaId = areaReservationDTO.AreaId,
-                ResidentId = areaReservationDTO.ResidentId,
+                CreatedByUserId = areaReservationDTO.CreatedByUserId,
                 StartDate = areaReservationDTO.StartDate,
                 EndDate = areaReservationDTO.EndDate,
                 Status = areaReservationDTO.Status

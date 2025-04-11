@@ -28,7 +28,7 @@ namespace ChamaOSindico.Infra.Repository
         => await _context.Find(_ => true).ToListAsync();
 
         public async Task<IEnumerable<AreaReservation>> GetAllAreaReservationsByUserAsync(string residentId)
-        => await _context.Find(ar => ar.ResidentId == residentId).ToListAsync();
+        => await _context.Find(ar => ar.CreatedByUserId == residentId).ToListAsync();
 
         public async Task<AreaReservation> GetAreaReservationByIdAsync(string id)
         => await _context.Find(ar => ar.Id == id).FirstOrDefaultAsync();
