@@ -1,10 +1,13 @@
 ﻿using ChamaOSindico.Application.DTOs;
 using ChamaOSindico.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
     public class AreaController : ControllerBase
     {
         private readonly IAreaService _areaService;
