@@ -64,10 +64,8 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenBlackListRepository, MongoTokenBlacklistRepository>();
-            services.AddScoped<IResidentRepository, ResidentRepository>();
             services.AddScoped<ITransactionService, MongoTransactionService>();
             services.AddScoped<IResidentRepository, ResidentRepository>();
-            services.AddScoped<ITransactionService, MongoTransactionService>();
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
 
