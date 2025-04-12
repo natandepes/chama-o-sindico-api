@@ -21,6 +21,16 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             classMap.MapMember(c => c.Role)
                 .SetSerializer(new EnumSerializer<UserRoleEnum>(BsonType.String))
                 .SetIsRequired(true);
+
+            classMap.MapMember(c => c.Email)
+                .SetIsRequired(true);
+
+            classMap.MapMember(c => c.PasswordHash)
+                .SetIsRequired(true);
+
+            classMap.MapMember(c => c.PersonId)
+                .SetSerializer(new StringSerializer(BsonType.ObjectId))
+                .SetIsRequired(true);
         }
     }
 }

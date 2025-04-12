@@ -3,6 +3,7 @@ using ChamaOSindico.Application.Commom;
 using ChamaOSindico.Application.DTOs.Auth;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Security;
+using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,16 +14,26 @@ namespace ChamaOSindico.Application.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IResidentRepository _residentRepository;
+        private readonly ITransactionService _transactionService;
         private readonly JwtService _jwtService;
         private readonly ITokenBlackListRepository _tokenBlacklistRepository;
         private readonly IUserService _userService;
 
-        public AuthService(IUserRepository userRepository, JwtService jwtService, ITokenBlackListRepository tokenBlacklistRepository, IUserService userService)
+        public AuthService(
+            IUserRepository userRepository, 
+            JwtService jwtService, 
+            ITokenBlackListRepository tokenBlacklistRepository, 
+            IUserService userService,
+            IResidentRepository residentRepository,
+            ITransactionService transactionService)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
             _tokenBlacklistRepository = tokenBlacklistRepository;
             _userService = userService;
+            _residentRepository = residentRepository;
+            _transactionService = transactionService;
         }
 
         public async Task<ApiResponse<string>> RegisterUserAsync(RegisterUserDto registerUserDto)
@@ -34,16 +45,46 @@ namespace ChamaOSindico.Application.Services
                 return ApiResponse<string>.ErrorResult("User already exists", HttpStatusCode.Conflict);
             }
 
-            var createdUser = await _userService.CreateUserAsync(registerUserDto);
-            
-            var authDto = new AuthUserDto
+            string? token = null;
+
+            await _transactionService.ExecuteTransactionAsync(async () =>
             {
-                Id = createdUser.Id,
-                Email = registerUserDto.Email,
-                Role = createdUser.Role
-            };
-            
-            var token =  _jwtService.GenerateToken(authDto);
+                var newResident = new Resident
+                {
+                    Name = registerUserDto.Name,
+                    Email = registerUserDto.Email,
+                    Phone = registerUserDto.Phone,
+                    Rg = registerUserDto.Rg,
+                    Cpf = registerUserDto.Cpf,
+                    BirthDate = registerUserDto.BirthDate,
+                    ApartmentNumber = registerUserDto.ApartmentNumber
+                };
+
+                await _residentRepository.CreateResidentAsync(newResident);
+
+                var newUser = new User
+                {
+                    Email = registerUserDto.Email,
+                    PasswordHash = PasswordHasher.Hash(registerUserDto.Password),
+                    Role = registerUserDto.Role,
+                    PersonId = newResident.Id
+                };
+
+                await _userRepository.CreateUserAsync(newUser);
+
+                // Assign the user ID to the resident
+                await _residentRepository.AssignUserIdToResidentAsync(newResident.Id, newUser.Id);
+
+                var authDto = new AuthUserDto
+                {
+                    Id = newUser.Id,
+                    Email = registerUserDto.Email,
+                    Role = newUser.Role.ToString()
+                };
+
+                token = _jwtService.GenerateToken(authDto);
+
+            });
 
             return ApiResponse<string>.SuccessResult(token, "User registered successfully.");
         }
