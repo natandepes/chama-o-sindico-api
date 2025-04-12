@@ -19,9 +19,9 @@ namespace ChamaOSindico.Infra.Repository
             await _context.InsertOneAsync(resident);
         }
         
-        public Task AssignUserIdToResidentAsync(string residentId, string userId)
+        public async Task AssignUserIdToResidentAsync(string residentId, string userId)
         {
-            var foundUser = _context.Find(r => r.Id == residentId).FirstOrDefaultAsync();
+            var foundUser = await _context.Find(r => r.Id == residentId).FirstOrDefaultAsync();
 
             if (foundUser == null)
             {
@@ -29,7 +29,7 @@ namespace ChamaOSindico.Infra.Repository
             }
 
             var update = Builders<Resident>.Update.Set(r => r.UserId, userId);
-            return _context.UpdateOneAsync(r => r.Id == residentId, update);
+            await _context.UpdateOneAsync(r => r.Id == residentId, update);
         }
 
         public async Task<List<Resident>> GetAllResidentsAsync()
