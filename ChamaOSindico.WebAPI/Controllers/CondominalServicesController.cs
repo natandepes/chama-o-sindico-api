@@ -10,7 +10,7 @@ namespace ChamaOSindico.WebAPI.Controllers
     {
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create([FromBody] CreateCondominalServicePayload payload) 
+        public async Task<ActionResult<string>> Create([FromBody] CreateCondominalServicePayload payload) 
             => await mediator.Send(payload.AsCommand());
     }
 }

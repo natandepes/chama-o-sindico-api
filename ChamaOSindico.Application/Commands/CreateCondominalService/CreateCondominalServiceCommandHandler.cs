@@ -3,14 +3,15 @@ using MediatR;
 
 namespace ChamaOSindico.Application.Commands.CreateCondominalService
 {
-    public class CreateCondominalServiceHandler : IRequestHandler<CreateCondominalServiceCommand, Guid>
+    public class CreateCondominalServiceHandler : IRequestHandler<CreateCondominalServiceCommand, string>
     { 
         // To be done
         // public class CreateCondominalServiceHandler(ICondominalServiceRepository repository)
 
-        public Task<Guid> Handle(CreateCondominalServiceCommand request, CancellationToken cancellationToken)
+        public Task<string> Handle(CreateCondominalServiceCommand request, CancellationToken cancellationToken)
         {
             var condominalService = new CondominalService(
+                id: request.Id,
                 title: request.Title.Trim(),
                 providerPhotoUrl: request.ProviderPhotoUrl.Trim(),
                 providerName: request.ProviderName.Trim(),
