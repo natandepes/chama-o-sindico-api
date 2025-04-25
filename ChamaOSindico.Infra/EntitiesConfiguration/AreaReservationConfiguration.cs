@@ -18,10 +18,6 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             classMap.AutoMap();
             classMap.SetIgnoreExtraElements(true);
 
-            classMap.MapIdMember(c => c.Id)
-                .SetIdGenerator(MongoDB.Bson.Serialization.IdGenerators.StringObjectIdGenerator.Instance)
-                .SetSerializer(new StringSerializer(BsonType.ObjectId));
-
             classMap.MapMember(c => c.AreaId)
                 .SetIsRequired(true);
             classMap.MapMember(c => c.ResidentId)
