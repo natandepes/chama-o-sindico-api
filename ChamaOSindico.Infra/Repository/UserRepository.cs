@@ -41,5 +41,10 @@ namespace ChamaOSindico.Infra.Repository
                 .Project(projection)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task DeleteUserAsync(string userId)
+        {
+            await _users.DeleteOneAsync(u => u.Id == userId);
+        }
     }
 }
