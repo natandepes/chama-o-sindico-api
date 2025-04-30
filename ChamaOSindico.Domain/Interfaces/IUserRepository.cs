@@ -8,5 +8,6 @@ namespace ChamaOSindico.Domain.Interfaces
         Task<User?> GetUserByIdAsync(string id);
         Task CreateUserAsync(User user);
         Task<string> GetUserHashedPassword(string id);
+        Task DeleteUserAsync(string userId);
     }
 }

@@ -47,5 +47,12 @@ namespace ChamaOSindico.WebAPI.Controllers
             var result = await _authService.LogoutAsync(token);
             return StatusCode(result.StatusCode, result);
         }
+
+        [HttpDelete(nameof(DeleteUser) + "/{userId}")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var response = await _authService.DeleteUserAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }
