@@ -1,10 +1,12 @@
 ﻿using ChamaOSindico.Application.DTOs;
 using ChamaOSindico.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
+    [Route("api/[controller]")]
     public class AreaController : ControllerBase
     {
         private readonly IAreaService _areaService;
@@ -21,7 +23,7 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(areas);
         }
 
-        [HttpGet(nameof(GetAreaById))]
+        [HttpGet(nameof(GetAreaById) + "/{id}")]
         public async Task<IActionResult> GetAreaById(string id)
         {
             var area = await _areaService.GetAreaByIdAsync(id);
@@ -64,7 +66,7 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(areaReservations);
         }
 
-        [HttpGet(nameof(GetAllAreaReservationsByUser))]
+        [HttpGet(nameof(GetAllAreaReservationsByUser) + "/{id}")]
         public async Task<IActionResult> GetAllAreaReservationsByUser(string id)
         {
             var areaReservations = await _areaService.GetAllAreaReservationsByUserAsync(id);
@@ -81,7 +83,7 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet(nameof(GetAreaReservationById))]
+        [HttpGet(nameof(GetAreaReservationById) + "/{id}")]
         public async Task<IActionResult> GetAreaReservationById(string id)
         {
             var areaReservation = await _areaService.GetAreaReservationByIdAsync(id);
@@ -94,7 +96,7 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(areaReservation);
         }
 
-        [HttpDelete(nameof(DeleteAreaReservation))]
+        [HttpDelete(nameof(DeleteAreaReservation) + "/{id}")]
         public async Task<IActionResult> DeleteAreaReservation(string id)
         {
             await _areaService.DeleteAreaReservationAsync(id);
