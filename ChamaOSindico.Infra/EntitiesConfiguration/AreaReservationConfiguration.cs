@@ -3,11 +3,6 @@ using ChamaOSindico.Infra.ConfigurationFiles;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChamaOSindico.Infra.EntitiesConfiguration
 {
@@ -19,8 +14,9 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             classMap.SetIgnoreExtraElements(true);
 
             classMap.MapMember(c => c.AreaId)
+                .SetSerializer(new StringSerializer(BsonType.ObjectId))
                 .SetIsRequired(true);
-            classMap.MapMember(c => c.ResidentId)
+            classMap.MapMember(c => c.CreatedByUserId)
                 .SetIsRequired(true);
             classMap.MapMember(c => c.StartDate)
                 .SetIsRequired(true);
