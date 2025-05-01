@@ -20,19 +20,19 @@ namespace ChamaOSindico.WebAPI.Controllers
         [HttpGet(nameof(GetAllAreas))]
         public async Task<IActionResult> GetAllAreas()
         {
-            var areas = await _areaService.GetAllAreasAsync();
-            return Ok(areas);
+            var response = await _areaService.GetAllAreasAsync();
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetAreaById) + "/{id}")]
         public async Task<IActionResult> GetAreaById(string id)
         {
-            var area = await _areaService.GetAreaByIdAsync(id);
-            if (area == null)
+            var response = await _areaService.GetAreaByIdAsync(id);
+            if (response == null)
             {
                 return NotFound("Area not found");
             }
-            return Ok(area);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpPost(nameof(SaveArea))]
@@ -43,11 +43,11 @@ namespace ChamaOSindico.WebAPI.Controllers
                 return BadRequest("Area data is null");
             }
 
-            await _areaService.SaveAreaAsync(areaDto);
-            return Ok("Area saved successfully");
+            var response = await _areaService.SaveAreaAsync(areaDto);
+            return StatusCode(Response.StatusCode, response);
         }
 
-        [HttpDelete(nameof(DeleteArea))]
+        [HttpDelete(nameof(DeleteArea) + "/{id}")]
         public async Task<IActionResult> DeleteArea(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -55,55 +55,55 @@ namespace ChamaOSindico.WebAPI.Controllers
                 return BadRequest("Area ID is null or empty");
             }
 
-            await _areaService.DeleteAreaAsync(id);
-            return Ok("Area deleted successfully");
+            var response = await _areaService.DeleteAreaAsync(id);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetAllAreaReservations))]
         public async Task<IActionResult> GetAllAreaReservations()
         {
-            var areaReservations = await _areaService.GetAllAreaReservationsAsync();
+            var response = await _areaService.GetAllAreaReservationsAsync();
 
-            return Ok(areaReservations);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetAllAreaReservationsByUser) + "/{id}")]
         public async Task<IActionResult> GetAllAreaReservationsByUser(string id)
         {
-            var areaReservations = await _areaService.GetAllAreaReservationsByUserAsync(id);
+            var response = await _areaService.GetAllAreaReservationsByUserAsync(id);
 
 
-            return Ok(areaReservations);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpPost(nameof(SaveAreaReservation))]
         public async Task<IActionResult> SaveAreaReservation([FromBody] AreaReservationDTO areaReservationDTO)
         {
-            await _areaService.SaveAreaReservationAsync(areaReservationDTO);
+            var response = await _areaService.SaveAreaReservationAsync(areaReservationDTO);
 
-            return Ok();
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetAreaReservationById) + "/{id}")]
         public async Task<IActionResult> GetAreaReservationById(string id)
         {
-            var areaReservation = await _areaService.GetAreaReservationByIdAsync(id);
+            var response = await _areaService.GetAreaReservationByIdAsync(id);
 
-            if (areaReservation == null)
+            if (response == null)
             {
                 return NotFound("Area reservation not found");
             }
 
-            return Ok(areaReservation);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpDelete(nameof(DeleteAreaReservation) + "/{id}")]
         public async Task<IActionResult> DeleteAreaReservation(string id)
         {
-            await _areaService.DeleteAreaReservationAsync(id);
+            var response = await _areaService.DeleteAreaReservationAsync(id);
 
 
-            return Ok();
+            return StatusCode(Response.StatusCode, response);
         }
     }
 

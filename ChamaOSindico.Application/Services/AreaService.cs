@@ -1,7 +1,11 @@
-﻿using ChamaOSindico.Application.DTOs;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.Application.DTOs.Auth;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Domain.Interfaces;
+using MongoDB.Bson.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +26,14 @@ namespace ChamaOSindico.Application.Services
             _areaReservationRepository = areaReservationRepository;
         }
 
-        public async Task DeleteAreaAsync(string id)
+        public async Task<ApiResponse<string>> DeleteAreaAsync(string id)
         {
             await _areaRepository.DeleteAreaAsync(id);
+
+            return ApiResponse<string>.SuccessResult(null, "Área Deletada com Sucesso");
         }
 
-        public async Task<IEnumerable<AreaDTO>> GetAllAreasAsync()
+        public async Task<ApiResponse<List<AreaDTO>>> GetAllAreasAsync()
         {
             var areas = await _areaRepository.GetAllAreasAsync();
             var areasDTO = areas.ToList().Select(a =>
@@ -44,10 +50,10 @@ namespace ChamaOSindico.Application.Services
                 };
             }).ToList();
 
-            return areasDTO;
+            return ApiResponse<List<AreaDTO>>.SuccessResult(areasDTO, null);
         }
 
-        public async Task<AreaDTO> GetAreaByIdAsync(string id)
+        public async Task<ApiResponse<AreaDTO>> GetAreaByIdAsync(string id)
         {
             var area = await _areaRepository.GetAreaByIdAsync(id);
 
@@ -62,10 +68,10 @@ namespace ChamaOSindico.Application.Services
                 CloseTime = area.CloseTime
             };
 
-            return areaDto;
+            return ApiResponse<AreaDTO>.SuccessResult(areaDto, null);
         }
 
-        public async Task SaveAreaAsync(AreaDTO areaDto)
+        public async Task<ApiResponse<string>> SaveAreaAsync(AreaDTO areaDto)
         {
             var area = new Area
             {
@@ -79,36 +85,57 @@ namespace ChamaOSindico.Application.Services
             };
 
             await _areaRepository.SaveAreaAsync(area);
+
+            return ApiResponse<string>.SuccessResult(null, "Área Salva com Sucesso");
         }
 
-        public async Task SaveAreaReservationAsync(AreaReservationDTO areaReservationDTO)
+        public async Task<ApiResponse<string>> SaveAreaReservationAsync(AreaReservationDTO areaReservationDTO)
         {
             var areaReservation = new AreaReservation
             {
                 Id = areaReservationDTO.Id ?? "",
                 AreaId = areaReservationDTO.AreaId,
+                AreaName = areaReservationDTO.AreaName,
                 CreatedByUserId = areaReservationDTO.CreatedByUserId,
                 StartDate = areaReservationDTO.StartDate,
                 EndDate = areaReservationDTO.EndDate,
-                Status = areaReservationDTO.Status
+                CreatedAt = DateTime.Now,
+                Status = (AreaReservationStatusEnum)Enum.Parse(typeof(AreaReservationStatusEnum), areaReservationDTO.Status)
             };
 
             await _areaReservationRepository.SaveAreaReservationAsync(areaReservation);
+
+            return ApiResponse<string>.SuccessResult(null, "Reserva Salva com Sucesso");
         }
 
-        public async Task DeleteAreaReservationAsync(string id)
+        public async Task<ApiResponse<string>> DeleteAreaReservationAsync(string id)
         {
             await _areaReservationRepository.DeleteAreaReservationAsync(id);
+
+            return ApiResponse<string>.SuccessResult(null, "Reserva Deletada com Sucesso");
         }
 
-        public async Task<IEnumerable<AreaReservation>> GetAllAreaReservationsAsync()
-        => await _areaReservationRepository.GetAllAreaReservationsAsync();
+        public async Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsAsync()
+        {
+            var reservations = await _areaReservationRepository.GetAllAreaReservationsAsync();
+
+            return ApiResponse<List<AreaReservation>>.SuccessResult(reservations.ToList(), null);
+        }
 
 
-        public async Task<IEnumerable<AreaReservation>> GetAllAreaReservationsByUserAsync(string residentId)
-        => await _areaReservationRepository.GetAllAreaReservationsByUserAsync(residentId);
+        public async Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsByUserAsync(string residentId)
+        {
+            var reservations = await _areaReservationRepository.GetAllAreaReservationsByUserAsync(residentId);
 
-        public async Task<AreaReservation> GetAreaReservationByIdAsync(string id)
-        => await _areaReservationRepository.GetAreaReservationByIdAsync(id);
+            return ApiResponse<List<AreaReservation>>.SuccessResult(reservations.ToList(), null);
+        }
+         
+
+        public async Task<ApiResponse<AreaReservation>> GetAreaReservationByIdAsync(string id)
+        {
+            var reservations = await _areaReservationRepository.GetAreaReservationByIdAsync(id);
+
+            return ApiResponse<AreaReservation>.SuccessResult(reservations, null);
+        }
     }
 }
