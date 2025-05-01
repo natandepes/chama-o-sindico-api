@@ -3,6 +3,7 @@ using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
@@ -25,10 +26,12 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(listResidents);
         }
 
-        [HttpGet(nameof(GetById) + "/{id}")]
-        public async Task<IActionResult> GetById(string id)
+        [HttpGet(nameof(GetResidentDetails))]
+        public async Task<IActionResult> GetResidentDetails()
         {
-            var resident = await _residentRepository.GetResidentByIdAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var resident = await _residentRepository.GetResidentByUserIdAsync(userId);
             
             if (resident == null)
             {
@@ -38,32 +41,18 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(resident);
         }
 
-        [HttpPut(nameof(Update) + "/{id}")]
-        public async Task<IActionResult> Update(string id, Resident resident)
+        [HttpPut(nameof(Update))]
+        public async Task<IActionResult> Update(Resident resident)
         {
-            var existingResident = await _residentRepository.GetResidentByIdAsync(id);
+            var existingResident = await _residentRepository.GetResidentByIdAsync(resident.Id);
             
             if (existingResident == null)
             {
                 return NotFound("Resident not found.");
             }
             
-            await _residentRepository.UpdateResidentAsync(id, resident);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Resident updated successfully."));
-        }
-
-        [HttpDelete(nameof(Delete) + "/{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            var existingResident = await _residentRepository.GetResidentByIdAsync(id);
-
-            if (existingResident == null)
-            {
-                return NotFound("Resident not found.");
-            }
-
-            await _residentRepository.DeleteResidentAsync(id);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Resident deleted successfully."));
+            await _residentRepository.UpdateResidentAsync(existingResident.Id, resident);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Informações pessoais atualizadas com sucesso."));
         }
     }
 }

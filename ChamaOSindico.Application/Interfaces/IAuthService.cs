@@ -5,8 +5,9 @@ namespace ChamaOSindico.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<ApiResponse<string>> RegisterUserAsync(RegisterUserDto registerUserDto);
-        Task<ApiResponse<string>> LoginAsync(LoginUserDto loginUserDto);
+        Task<ApiResponse<AuthResultDto>> RegisterUserAsync(RegisterUserDto registerUserDto);
+        Task<ApiResponse<AuthResultDto>> LoginAsync(LoginUserDto loginUserDto);
         Task<ApiResponse<string>> LogoutAsync(string token);
+        Task<ApiResponse<string>> DeleteUserAsync(string userId);
     }
 }

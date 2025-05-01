@@ -36,16 +36,18 @@ namespace ChamaOSindico.Application.Services
             _transactionService = transactionService;
         }
 
-        public async Task<ApiResponse<string>> RegisterUserAsync(RegisterUserDto registerUserDto)
+        public async Task<ApiResponse<AuthResultDto>> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
             var existing = await _userRepository.GetUserByEmailAsync(registerUserDto.Email);
 
             if (existing != null)
             {
-                return ApiResponse<string>.ErrorResult("User already exists", HttpStatusCode.Conflict);
+                return ApiResponse<AuthResultDto>.ErrorResult("Usuário já cadastrado.", HttpStatusCode.Conflict);
             }
 
             string? token = null;
+            string? residentName = null;
+            string? userId = null;
 
             await _transactionService.ExecuteTransactionAsync(async () =>
             {
@@ -83,26 +85,34 @@ namespace ChamaOSindico.Application.Services
                 };
 
                 token = _jwtService.GenerateToken(authDto);
-
+                residentName = newResident.Name;
+                userId = newUser.Id;
             });
 
-            return ApiResponse<string>.SuccessResult(token, "User registered successfully.");
+            var result = new AuthResultDto
+            {
+                Token = token,
+                Name = residentName,
+                UserId = userId
+            };
+
+            return ApiResponse<AuthResultDto>.SuccessResult(result, "Usuário criado com sucesso!");
         }
 
-        public async Task<ApiResponse<string>> LoginAsync(LoginUserDto loginUserDto)
+        public async Task<ApiResponse<AuthResultDto>> LoginAsync(LoginUserDto loginUserDto)
         {
             var user = await _userService.GetUserByEmailAsync(loginUserDto.Email);
 
             if (user == null)
             {
-                return ApiResponse<string>.ErrorResult("The e-mail provided does not exists.", HttpStatusCode.Unauthorized);
+                return ApiResponse<AuthResultDto>.ErrorResult("O e-mail disponibilizado não existe.", HttpStatusCode.Unauthorized);
             }
 
             var userHashedPassword = await _userRepository.GetUserHashedPassword(user.Id);
 
             if (!PasswordHasher.Verify(loginUserDto.Password, userHashedPassword))
             {
-                return ApiResponse<string>.ErrorResult("Invalid password.", HttpStatusCode.Unauthorized);
+                return ApiResponse<AuthResultDto>.ErrorResult("Senha incorreta.", HttpStatusCode.Unauthorized);
             }
 
             userHashedPassword = null; // Clear password hash for security reasons
@@ -116,7 +126,19 @@ namespace ChamaOSindico.Application.Services
 
             var token = _jwtService.GenerateToken(authDto);
 
-            return ApiResponse<string>.SuccessResult(token, "Login successful.");
+            var resident = await _residentRepository.GetResidentByUserIdAsync(user.Id);
+
+            string? residentName = resident.Name;
+            string? userId = resident.UserId;
+
+            var result = new AuthResultDto
+            {
+                Token = token,
+                Name = residentName,
+                UserId = userId
+            };
+
+            return ApiResponse<AuthResultDto>.SuccessResult(result, "Login realizado com sucesso!");
         }
 
         public async Task<ApiResponse<string>> LogoutAsync(string token)
@@ -132,6 +154,32 @@ namespace ChamaOSindico.Application.Services
             catch
             {
                 return ApiResponse<string>.ErrorResult("Invalid token.", System.Net.HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<ApiResponse<string>> DeleteUserAsync(string userId)
+        {
+            bool isDeleted = false;
+            
+            await _transactionService.ExecuteTransactionAsync(async () =>
+            {
+                var resident = await _residentRepository.GetResidentByUserIdAsync(userId);
+
+                if (resident != null)
+                {
+                    await _residentRepository.DeleteResidentAsync(resident.Id);
+                    await _userRepository.DeleteUserAsync(userId);
+                    isDeleted = true;
+                }
+            });
+            
+            if (isDeleted)
+            {
+                return ApiResponse<string>.SuccessResult(null, "Usuário deletado com sucesso.");
+            }
+            else
+            {
+                return ApiResponse<string>.ErrorResult("Usuário não encontrado.", HttpStatusCode.NotFound);
             }
         }
     }
