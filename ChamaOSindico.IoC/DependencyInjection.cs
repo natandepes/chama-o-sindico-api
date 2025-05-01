@@ -68,6 +68,7 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IResidentRepository, ResidentRepository>();
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
+            services.AddScoped<ICondominalManagerRepository, CondominalManagerRepository>();
 
             // Register Services
             services.AddScoped<IAuthService, AuthService>();
