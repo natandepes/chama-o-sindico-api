@@ -4,6 +4,7 @@ using ChamaOSindico.Application.DTOs.Auth;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Application.Security;
 using ChamaOSindico.Domain.Entities;
+using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,6 +16,7 @@ namespace ChamaOSindico.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IResidentRepository _residentRepository;
+        private readonly ICondominalManagerRepository _condominalManagerRepository;
         private readonly ITransactionService _transactionService;
         private readonly JwtService _jwtService;
         private readonly ITokenBlackListRepository _tokenBlacklistRepository;
@@ -26,6 +28,7 @@ namespace ChamaOSindico.Application.Services
             ITokenBlackListRepository tokenBlacklistRepository, 
             IUserService userService,
             IResidentRepository residentRepository,
+            ICondominalManagerRepository condominalManagerRepository,
             ITransactionService transactionService)
         {
             _userRepository = userRepository;
@@ -33,70 +36,119 @@ namespace ChamaOSindico.Application.Services
             _tokenBlacklistRepository = tokenBlacklistRepository;
             _userService = userService;
             _residentRepository = residentRepository;
+            _condominalManagerRepository = condominalManagerRepository;
             _transactionService = transactionService;
         }
 
         public async Task<ApiResponse<AuthResultDto>> RegisterUserAsync(RegisterUserDto registerUserDto)
         {
-            var existing = await _userRepository.GetUserByEmailAsync(registerUserDto.Email);
+            var existingUser = await _userRepository.GetUserByEmailAsync(registerUserDto.Email);
 
-            if (existing != null)
+            if (existingUser != null)
             {
                 return ApiResponse<AuthResultDto>.ErrorResult("Usuário já cadastrado.", HttpStatusCode.Conflict);
             }
 
             string? token = null;
-            string? residentName = null;
+            string? userName = null;
             string? userId = null;
 
-            await _transactionService.ExecuteTransactionAsync(async () =>
+            if (registerUserDto.Role == UserRoleEnum.Resident)
             {
-                var newResident = new Resident
+                await _transactionService.ExecuteTransactionAsync(async () =>
                 {
-                    Name = registerUserDto.Name,
-                    Email = registerUserDto.Email,
-                    Phone = registerUserDto.Phone,
-                    Rg = registerUserDto.Rg,
-                    Cpf = registerUserDto.Cpf,
-                    BirthDate = registerUserDto.BirthDate,
-                    ApartmentNumber = registerUserDto.ApartmentNumber
-                };
+                    var newResident = new Resident
+                    {
+                        Name = registerUserDto.Name,
+                        Email = registerUserDto.Email,
+                        Phone = registerUserDto.Phone,
+                        Rg = registerUserDto.Rg,
+                        Cpf = registerUserDto.Cpf,
+                        BirthDate = registerUserDto.BirthDate,
+                        ApartmentNumber = registerUserDto.ApartmentNumber
+                    };
 
-                await _residentRepository.CreateResidentAsync(newResident);
+                    await _residentRepository.CreateResidentAsync(newResident);
 
-                var newUser = new User
+                    var newUser = new User
+                    {
+                        Email = registerUserDto.Email,
+                        PasswordHash = PasswordHasher.Hash(registerUserDto.Password),
+                        Role = registerUserDto.Role,
+                        PersonId = newResident.Id
+                    };
+
+                    await _userRepository.CreateUserAsync(newUser);
+
+                    // Assign the user ID to the resident
+                    await _residentRepository.AssignUserIdToResidentAsync(newResident.Id, newUser.Id);
+
+                    var authDto = new AuthUserDto
+                    {
+                        Id = newUser.Id,
+                        Email = registerUserDto.Email,
+                        Role = newUser.Role.ToString()
+                    };
+
+                    token = _jwtService.GenerateToken(authDto);
+                    userName = newResident.Name;
+                    userId = newUser.Id;
+                });
+
+            } else
+            {
+                await _transactionService.ExecuteTransactionAsync(async () =>
                 {
-                    Email = registerUserDto.Email,
-                    PasswordHash = PasswordHasher.Hash(registerUserDto.Password),
-                    Role = registerUserDto.Role,
-                    PersonId = newResident.Id
-                };
+                    var newCondominalManager = new CondominalManager
+                    {
+                        Name = registerUserDto.Name,
+                        Email = registerUserDto.Email,
+                        Phone = registerUserDto.Phone,
+                        Rg = registerUserDto.Rg,
+                        Cpf = registerUserDto.Cpf,
+                        BirthDate = registerUserDto.BirthDate,
+                        IsResident = registerUserDto.IsResident,
+                        Salary = registerUserDto.Salary
+                    };
 
-                await _userRepository.CreateUserAsync(newUser);
+                    await _condominalManagerRepository.CreateCondominalManagerAsync(newCondominalManager);
 
-                // Assign the user ID to the resident
-                await _residentRepository.AssignUserIdToResidentAsync(newResident.Id, newUser.Id);
+                    var newUser = new User
+                    {
+                        Email = registerUserDto.Email,
+                        PasswordHash = PasswordHasher.Hash(registerUserDto.Password),
+                        Role = registerUserDto.Role,
+                        PersonId = newCondominalManager.Id
+                    };
 
-                var authDto = new AuthUserDto
-                {
-                    Id = newUser.Id,
-                    Email = registerUserDto.Email,
-                    Role = newUser.Role.ToString()
-                };
+                    await _userRepository.CreateUserAsync(newUser);
 
-                token = _jwtService.GenerateToken(authDto);
-                residentName = newResident.Name;
-                userId = newUser.Id;
-            });
+                    // Assign the user ID to the condominal manager
+                    await _condominalManagerRepository.AssignUserIdToCondominalManagerAsync(newCondominalManager.Id, newUser.Id);
+
+                    var authDto = new AuthUserDto
+                    {
+                        Id = newCondominalManager.Id,
+                        Email = registerUserDto.Email,
+                        Role = newUser.Role.ToString()
+                    };
+
+                    token = _jwtService.GenerateToken(authDto);
+                    userName = newCondominalManager.Name;
+                    userId = newUser.Id;
+                });
+            }
 
             var result = new AuthResultDto
             {
                 Token = token,
-                Name = residentName,
+                Name = userName,
                 UserId = userId
             };
 
-            return ApiResponse<AuthResultDto>.SuccessResult(result, "Usuário criado com sucesso!");
+            return registerUserDto.Role == UserRoleEnum.Resident  
+                ? ApiResponse<AuthResultDto>.SuccessResult(result, "Usuário criado com sucesso!")
+                : ApiResponse<AuthResultDto>.SuccessResult(result, "Síndico criado com sucesso!");
         }
 
         public async Task<ApiResponse<AuthResultDto>> LoginAsync(LoginUserDto loginUserDto)
@@ -126,15 +178,33 @@ namespace ChamaOSindico.Application.Services
 
             var token = _jwtService.GenerateToken(authDto);
 
-            var resident = await _residentRepository.GetResidentByUserIdAsync(user.Id);
+            string? userName = null;
+            string? userId = null;
 
-            string? residentName = resident.Name;
-            string? userId = resident.UserId;
+            if (user.Role == UserRoleEnum.Resident.ToString())
+            {
+                var resident = await _residentRepository.GetResidentByUserIdAsync(user.Id);
+
+                if (resident != null)
+                {
+                    userName = resident.Name;
+                    userId = resident.Id;
+                }
+            } else
+            {
+                var condominalManager = await _condominalManagerRepository.GetCondominalManagerByUserIdAsync(user.Id);
+
+                if (condominalManager != null)
+                {
+                    userName = condominalManager.Name;
+                    userId = condominalManager.Id;
+                }
+            }
 
             var result = new AuthResultDto
             {
                 Token = token,
-                Name = residentName,
+                Name = userName,
                 UserId = userId
             };
 
