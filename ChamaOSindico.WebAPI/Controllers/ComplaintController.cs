@@ -25,15 +25,22 @@ namespace ChamaOSindico.WebAPI.Controllers
             var complaints = await _complaintRepository.GetAllComplaintsAsync();
             return Ok(complaints);
         }
+        [HttpGet(nameof(GetAllComplaintsAsyncByUserId))]
+        public async Task<IActionResult> GetAllComplaintsAsyncByUserId()
+        {
+            var idUser = User.GetUserId();
+            var complaints = await _complaintRepository.GetAllComplaintsAsyncByUserId(idUser);
+            return Ok(complaints);
+        }
 
         [HttpPost(nameof(GetComplaintById))]
         public async Task<IActionResult> GetComplaintById([FromBody] string id)
         {
-            var userId = User.GetUserId();
+            var idUser = User.GetUserId();
             var complaint = await _complaintRepository.GetComplaintByIdAsync(id);
 
             if (complaint == null) return NotFound("Denúncia não encontrada");
-            if (complaint.CreatedByUserId != userId) return Forbid();
+            if (complaint.CreatedByUserId != idUser) return Forbid();
 
             return Ok(complaint);
         }

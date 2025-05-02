@@ -21,10 +21,13 @@ namespace ChamaOSindico.Infra.Repository
 
         public async Task<List<Complaint>> GetAllComplaintsAsync()
         {
-            //var allResidents = _residentRepository.GetAllResidentsAsync();
             var allComplaints = _context.Find(_ => true).ToListAsync();
-            
             return await _context.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<List<Complaint>> GetAllComplaintsAsyncByUserId(string idUser)
+        {
+            return await _context.Find(c => c.CreatedByUserId == idUser).ToListAsync();
         }
 
         public async Task<Complaint> GetComplaintByIdAsync(string idComplaint)
