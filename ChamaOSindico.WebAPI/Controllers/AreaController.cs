@@ -84,6 +84,19 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok();
         }
 
+        [HttpGet(nameof(GetAreaReservationById))]
+        public async Task<IActionResult> GetAreaReservationById(string id)
+        {
+            var areaReservation = await _areaService.GetAreaReservationByIdAsync(id);
+
+            if (areaReservation == null)
+            {
+                return NotFound("Area reservation not found");
+            }
+
+            return Ok(areaReservation);
+        }
+
         [HttpDelete(nameof(DeleteAreaReservation))]
         public async Task<IActionResult> DeleteAreaReservation(string id)
         {
