@@ -44,5 +44,10 @@ namespace ChamaOSindico.Infra.Repository
         {
             await _context.DeleteOneAsync(v => v.Id == idVehicle);
         }
+
+        public async Task<Vehicle> CarSpaceOccupied(int carSpace)
+        {
+            return await _context.Find(v => v.CarSpace == carSpace).FirstOrDefaultAsync();
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace ChamaOSindico.Domain.Interfaces
             Task CreateVehicleAsync(Vehicle vehicle);
             Task UpdateVehicleAsync(string idVehicle, Vehicle vehicle);
             Task DeleteVehicleAsync(string idVehicle);
+            Task<Vehicle> CarSpaceOccupied(int carSpace);
         }
 }

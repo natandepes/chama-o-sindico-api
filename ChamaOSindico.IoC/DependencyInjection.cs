@@ -74,6 +74,7 @@ namespace ChamaOSindico.IoC
             services.AddScoped<JwtService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IVehicleService, VehicleService>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 AppDomain.CurrentDomain.Load("ChamaOSindico.Application"))

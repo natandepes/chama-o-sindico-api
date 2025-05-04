@@ -1,4 +1,6 @@
 ﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.WebAPI.Extensions;
@@ -12,27 +14,27 @@ namespace ChamaOSindico.WebAPI.Controllers
     [Authorize]
     public class VehicleController : ControllerBase
     {   
-        private readonly IVehicleRepository _vehicleRepository;
+        private readonly IVehicleService _vehicleService;
 
-        public VehicleController(IVehicleRepository vehicleRepository)
+        public VehicleController(IVehicleService vehicleService)
         {
-            _vehicleRepository = vehicleRepository;
+            _vehicleService = vehicleService;
         }
 
         [HttpGet(nameof(GetAllVehicles))]
         
         public async Task<IActionResult> GetAllVehicles()
         {
-            var listVehicles = await _vehicleRepository.GetAllVehiclesAsync();
-            return Ok(listVehicles);
+            var response = await _vehicleService.GetAllVehicles();
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetAllVehiclesByUserId))]
         public async Task<IActionResult> GetAllVehiclesByUserId()
         {
             var userId = User.GetUserId();
-            var listVehicles = await _vehicleRepository.GetAllVehiclesByUserIdAsync(userId);
-            return Ok(listVehicles);
+            var response = await _vehicleService.GetAllVehiclesByUserId(userId!);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpGet(nameof(GetVehicleById) + "/{id}")]
@@ -44,40 +46,24 @@ namespace ChamaOSindico.WebAPI.Controllers
                 return StatusCode(401, "User not authenticated.");
             }
 
-            var vehicle = await _vehicleRepository.GetVehicleByIdAsync(id);
+            var response = await _vehicleService.GetVehicleById(id);
 
-            if (vehicle == null)
-            {
-                return NotFound("Vehicle not found.");
-            }
-
-            if (vehicle.CreatedByUserId != userId)
-            {
-                return StatusCode(403, "Access denied. You do not own this vehicle");
-            }
-
-            return Ok(vehicle);
+            return StatusCode(Response.StatusCode, response);
         }
 
-        [HttpPost(nameof(CreateVehicle))]
-        public async Task<IActionResult> CreateVehicle(Vehicle vehicle)
+        [HttpPost(nameof(SaveVehicle))]
+        public async Task<IActionResult> SaveVehicle([FromBody] VehicleDto vehicle)
         {
-            await _vehicleRepository.CreateVehicleAsync(vehicle);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle created successfully."));
-        }
-
-        [HttpPut(nameof(Update) + "/{id}")]
-        public async Task<IActionResult> Update(string id, Vehicle vehicle)
-        {
-            await _vehicleRepository.UpdateVehicleAsync(id, vehicle);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle updated successfully."));
+            vehicle.CreatedByUserId = User.GetUserId();
+            var response = await _vehicleService.SaveVehicle(vehicle);
+            return StatusCode(Response.StatusCode, response);
         }
 
         [HttpDelete(nameof(DeleteVehicle) + "/{id}")]
         public async Task<IActionResult> DeleteVehicle(string id)
         {
-            await _vehicleRepository.DeleteVehicleAsync(id);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Vehicle deleted successfully."));
+            var response = await _vehicleService.DeleteVehicle(id);
+            return StatusCode(Response.StatusCode, response);
         }
     }
 }
