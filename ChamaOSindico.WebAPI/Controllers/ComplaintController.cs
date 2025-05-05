@@ -9,7 +9,7 @@ namespace ChamaOSindico.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class ComplaintController : ControllerBase
     {   
         private readonly IComplaintRepository _complaintRepository;
@@ -22,49 +22,63 @@ namespace ChamaOSindico.WebAPI.Controllers
         [HttpGet(nameof(GetAllComplaints))]
         public async Task<IActionResult> GetAllComplaints()
         {
-            var listComplaints = await _complaintRepository.GetAllComplaintsAsync();
-            return Ok(listComplaints);
+            var complaints = await _complaintRepository.GetAllComplaintsAsync();
+            return Ok(complaints);
+        }
+        [HttpGet(nameof(GetAllComplaintsAsyncByUserId))]
+        public async Task<IActionResult> GetAllComplaintsAsyncByUserId()
+        {
+            var idUser = User.GetUserId();
+            var complaints = await _complaintRepository.GetAllComplaintsAsyncByUserId(idUser);
+            return Ok(complaints);
         }
 
-        [HttpGet(nameof(GetComplaintById) + "/{id}")]
-        public async Task<IActionResult> GetComplaintById(string id)
+        [HttpPost(nameof(GetComplaintById))]
+        public async Task<IActionResult> GetComplaintById([FromBody] string id)
         {
-            var userId = User.GetUserId();
-
+            var idUser = User.GetUserId();
             var complaint = await _complaintRepository.GetComplaintByIdAsync(id);
 
-            if (complaint == null)
-            {
-                return NotFound("Complaint not found.");
-            }
-
-            if (complaint.CreatedByUserId != userId)
-            {
-                return StatusCode(403, "Access denied. You do not own this complaint");
-            }
+            if (complaint == null) return NotFound("Denúncia não encontrada");
+            if (complaint.CreatedByUserId != idUser) return Forbid();
 
             return Ok(complaint);
         }
 
         [HttpPost(nameof(CreateComplaint))]
-        public async Task<IActionResult> CreateComplaint(Complaint complaint)
+        public async Task<IActionResult> CreateComplaint([FromBody] Complaint complaint)
         {
+            complaint.CreatedByUserId = User.GetUserId();
             await _complaintRepository.CreateComplaintAsync(complaint);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint created successfully."));
+            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint created successfully"));
         }
 
-        [HttpPut(nameof(Update) + "/{id}")]
-        public async Task<IActionResult> Update(string id, Complaint complaint)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] Complaint complaint)
         {
-            await _complaintRepository.UpdateComplaintAsync(id, complaint);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint updated successfully."));
+            var userId = User.GetUserId();
+            var idComplaint = complaint.Id;
+            
+            var existingComplaint = await _complaintRepository.GetComplaintByIdAsync(complaint.Id);
+            if (existingComplaint == null) return NotFound();
+            if (existingComplaint.CreatedByUserId != userId) return Forbid();
+
+            await _complaintRepository.UpdateComplaintAsync(idComplaint, complaint);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Denúncia atualizada com sucesso"));
         }
 
-        [HttpDelete(nameof(DeleteComplaint) + "/{id}")]
-        public async Task<IActionResult> DeleteComplaint(string id)
+        [HttpPost(nameof(DeleteComplaint))]
+        public async Task<IActionResult> DeleteComplaint([FromBody] string id)
         {
+            var userId = User.GetUserId();
+            var complaint = await _complaintRepository.GetComplaintByIdAsync(id);
+
+            if (complaint == null) return NotFound();
+            if (complaint.CreatedByUserId != userId) return Forbid();
+
             await _complaintRepository.DeleteComplaintAsync(id);
-            return Ok(ApiResponse<string>.SuccessResult(null, "Complaint deleted successfully."));
+            return Ok(ApiResponse<string>.SuccessResult(null, "Denúncia removida com sucesso"));
         }
     }
+
 }

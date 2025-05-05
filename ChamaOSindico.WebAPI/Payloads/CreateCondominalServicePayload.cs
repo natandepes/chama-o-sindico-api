@@ -4,6 +4,7 @@ namespace ChamaOSindico.WebAPI.Payloads
 {
     public sealed record CreateCondominalServicePayload
     {
+        public required string Id { get; init; }
         public required string Title { get; init; }
         public required string ProviderPhotoUrl { get; init; }
         public required string ProviderName { get; init; }
@@ -12,6 +13,7 @@ namespace ChamaOSindico.WebAPI.Payloads
 
         public CreateCondominalServiceCommand AsCommand()
             => new(
+                Id: Id,
                 Title: Title,
                 ProviderPhotoUrl: ProviderPhotoUrl,
                 ProviderName: ProviderName,
