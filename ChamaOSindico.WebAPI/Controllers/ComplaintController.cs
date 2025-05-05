@@ -53,12 +53,11 @@ namespace ChamaOSindico.WebAPI.Controllers
             return Ok(ApiResponse<string>.SuccessResult(null, "Complaint created successfully"));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Complaint complaint)
+        [HttpPut(nameof(EditComplaint))]
+        public async Task<IActionResult> EditComplaint([FromBody] Complaint complaint)
         {
             var userId = User.GetUserId();
             var idComplaint = complaint.Id;
-            
             var existingComplaint = await _complaintRepository.GetComplaintByIdAsync(complaint.Id);
             if (existingComplaint == null) return NotFound();
             if (existingComplaint.CreatedByUserId != userId) return Forbid();
