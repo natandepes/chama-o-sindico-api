@@ -19,13 +19,16 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             classMap.MapMember(v => v.Model)
                 .SetIsRequired(true);
             
-            classMap.MapMember(v => v.Color)
-                .SetIsRequired(true)
-                .SetSerializer(new EnumSerializer<VehicleColorEnum>(BsonType.String)); 
-            
             classMap.MapMember(v => v.VehicleType)
                 .SetIsRequired(true)
                 .SetSerializer(new EnumSerializer<VehicleTypeEnum>(BsonType.String));
+
+            classMap.MapMember(v => v.VehicleImage)
+                .SetIsRequired(true)
+                .SetSerializer(new ByteArraySerializer(BsonType.Binary));
+
+            classMap.MapMember(v => v.ImageType)
+                .SetIsRequired(true);
 
             classMap.MapMember(v => v.CreatedByUserId)
                 .SetIsRequired(true)
