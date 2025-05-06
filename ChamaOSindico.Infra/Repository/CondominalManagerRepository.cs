@@ -43,5 +43,10 @@ namespace ChamaOSindico.Infra.Repository
 
             return await _context.Find(r => r.UserId == userId).FirstOrDefaultAsync();
         }
+
+        public async Task<CondominalManager> GetCurrentCondominalManager()
+        {
+            return await _context.Find(_ => true).FirstOrDefaultAsync();
+        }
     }
 }

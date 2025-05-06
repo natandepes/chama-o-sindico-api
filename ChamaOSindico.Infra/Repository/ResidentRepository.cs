@@ -56,5 +56,12 @@ namespace ChamaOSindico.Infra.Repository
         {
             await _context.DeleteOneAsync(r => r.Id == id);
         }
+
+        public async Task<List<Resident>> GetResidentsByUserIdAsync(List<string> userIds)
+        {
+            return await _context
+                .Find(r => userIds.Contains(r.UserId))
+                .ToListAsync();
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.Application.DTOs.AreaReservation;
 using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,8 +37,8 @@ namespace ChamaOSindico.WebAPI.Controllers
             return StatusCode(Response.StatusCode, response);
         }
 
-        [HttpPost(nameof(SaveArea))]
-        public async Task<IActionResult> SaveArea([FromBody] AreaDTO areaDto)
+        [HttpPost(nameof(CreateArea))]
+        public async Task<IActionResult> CreateArea([FromBody] AreaDTO areaDto)
         {
             if (areaDto == null)
             {
@@ -67,10 +69,12 @@ namespace ChamaOSindico.WebAPI.Controllers
             return StatusCode(Response.StatusCode, response);
         }
 
-        [HttpGet(nameof(GetAllAreaReservationsByUser) + "/{id}")]
-        public async Task<IActionResult> GetAllAreaReservationsByUser(string id)
+        [HttpGet(nameof(GetAllAreaReservationsByUser))]
+        public async Task<IActionResult> GetAllAreaReservationsByUser()
         {
-            var response = await _areaService.GetAllAreaReservationsByUserAsync(id);
+            var userId = User.GetUserId();
+            
+            var response = await _areaService.GetAllAreaReservationsByUserAsync(userId);
 
 
             return StatusCode(Response.StatusCode, response);

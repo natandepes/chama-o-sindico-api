@@ -1,10 +1,8 @@
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Enums;
-using System.Reflection.Metadata;
 
-namespace ChamaOSindico.Application.DTOs
+namespace ChamaOSindico.Application.DTOs.Vehicles
 {
-
     public class VehicleDto: BaseDto
     {
         public string LicensePlate { get; set; }
@@ -14,6 +12,7 @@ namespace ChamaOSindico.Application.DTOs
         public string ImageType { get; set; }
         public string VehicleType { get; set; }
         public string? CreatedByUserId { get; set; }
+        public string? CreatedByUserName { get; set; }
 
         public static VehicleDto TranslateTo(Vehicle vehicle)
         {

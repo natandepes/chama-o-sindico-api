@@ -1,5 +1,6 @@
 ﻿using ChamaOSindico.Application.Commom;
 using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.Application.DTOs.AreaReservation;
 using ChamaOSindico.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ChamaOSindico.Application.Interfaces
         Task<ApiResponse<AreaDTO>> GetAreaByIdAsync(string id);
         Task<ApiResponse<string>> SaveAreaAsync(AreaDTO areaDto);
         Task<ApiResponse<string>> DeleteAreaAsync(string id);
-        Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsAsync();
+        Task<ApiResponse<List<AreaReservationResponseDto>>> GetAllAreaReservationsAsync();
         Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsByUserAsync(string userId);
         Task<ApiResponse<AreaReservation>> GetAreaReservationByIdAsync(string id);
         Task<ApiResponse<string>> SaveAreaReservationAsync(AreaReservationDTO areaReservation);

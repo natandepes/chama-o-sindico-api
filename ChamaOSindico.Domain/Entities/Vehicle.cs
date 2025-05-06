@@ -1,5 +1,4 @@
 ﻿using ChamaOSindico.Domain.Enums;
-using System.Reflection.Metadata;
 
 namespace ChamaOSindico.Domain.Entities
 {

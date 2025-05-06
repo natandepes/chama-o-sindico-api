@@ -1,16 +1,10 @@
 ﻿using ChamaOSindico.Application.Commom;
 using ChamaOSindico.Application.DTOs;
-using ChamaOSindico.Application.DTOs.Auth;
+using ChamaOSindico.Application.DTOs.AreaReservation;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Domain.Interfaces;
-using MongoDB.Bson.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChamaOSindico.Application.Services
 {
@@ -18,12 +12,15 @@ namespace ChamaOSindico.Application.Services
     {
         private readonly IAreaRepository _areaRepository;
         private readonly IAreaReservationRepository _areaReservationRepository;
+        private readonly IResidentRepository _residentRepository;
 
         public AreaService(IAreaRepository areaRepository,
-            IAreaReservationRepository areaReservationRepository)
+            IAreaReservationRepository areaReservationRepository,
+            IResidentRepository residentRepository)
         {
             _areaRepository = areaRepository;
             _areaReservationRepository = areaReservationRepository;
+            _residentRepository = residentRepository;
         }
 
         public async Task<ApiResponse<string>> DeleteAreaAsync(string id)
@@ -115,11 +112,29 @@ namespace ChamaOSindico.Application.Services
             return ApiResponse<string>.SuccessResult(null, "Reserva Deletada com Sucesso");
         }
 
-        public async Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsAsync()
+        public async Task<ApiResponse<List<AreaReservationResponseDto>>> GetAllAreaReservationsAsync()
         {
             var reservations = await _areaReservationRepository.GetAllAreaReservationsAsync();
 
-            return ApiResponse<List<AreaReservation>>.SuccessResult(reservations.ToList(), null);
+            var areaReservationDto = new List<AreaReservationResponseDto>();
+
+            foreach (var reservation in reservations)
+            {
+                var resident = await _residentRepository.GetResidentByUserIdAsync(reservation.CreatedByUserId);
+
+                var areaReservation = new AreaReservationResponseDto
+                {
+                    Id = reservation.Id,
+                    AreaName = reservation.AreaName,
+                    CreatedByUserName = resident.Name,
+                    StartDate = reservation.StartDate,
+                    EndDate = reservation.EndDate
+                };
+
+                areaReservationDto.Add(areaReservation);
+            }
+
+            return ApiResponse<List<AreaReservationResponseDto>>.SuccessResult(areaReservationDto, null);
         }
 
 
