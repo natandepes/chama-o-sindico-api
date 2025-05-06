@@ -9,5 +9,6 @@ namespace ChamaOSindico.Domain.Interfaces
         Task<CondominalManager?> GetCurrentCondominalManager();
         Task AssignUserIdToCondominalManagerAsync(string condominalManagerId, string userId);
         Task CreateCondominalManagerAsync(CondominalManager condominalManager);
+        Task UpdateResidentAsync(string id, CondominalManager condominalManager);
     }
 }
