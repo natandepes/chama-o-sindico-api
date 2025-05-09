@@ -1,6 +1,6 @@
 ﻿using ChamaOSindico.Domain.Enums;
 
-namespace ChamaOSindico.Application.DTOs
+namespace ChamaOSindico.Application.DTOs.AreaReservation
 {
     public class AreaReservationDTO
     {

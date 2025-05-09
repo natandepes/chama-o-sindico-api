@@ -1,33 +1,49 @@
 ﻿using ChamaOSindico.Application.Commom;
-using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.Application.DTOs.Vehicles;
 using ChamaOSindico.Application.Interfaces;
-using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChamaOSindico.Application.Services
 {
     public class VehicleService : IVehicleService
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IResidentRepository _residentRepository;
 
-        public VehicleService(IVehicleRepository vehicleRepository)
+        public VehicleService(IVehicleRepository vehicleRepository, IResidentRepository residentRepository)
         {
             _vehicleRepository = vehicleRepository;
+            _residentRepository = residentRepository;
         }
 
         public async Task<ApiResponse<List<VehicleDto>>> GetAllVehicles()
         {
             var listVehicles = await _vehicleRepository.GetAllVehiclesAsync();
-            var listVehiclesDto = listVehicles.Select(lv =>
+
+            // Step 2: Get unique user IDs
+            var userIds = listVehicles
+                .Where(v => !string.IsNullOrEmpty(v.CreatedByUserId))
+                .Select(v => v.CreatedByUserId)
+                .Distinct()
+                .ToList();
+
+            // Step 3: Fetch all residents in a single DB query
+            var residents = await _residentRepository
+                .GetResidentsByUserIdAsync(userIds);
+
+            // Step 4: Build lookup
+            var userIdNameMap = residents.ToDictionary(r => r.UserId, r => r.Name);
+
+            // Step 5: Translate to DTO with CreatedByUserName
+            var listVehiclesDto = listVehicles.Select(vehicle =>
             {
-                return VehicleDto.TranslateTo(lv);
+                var dto = VehicleDto.TranslateTo(vehicle);
+                dto.CreatedByUserId = vehicle.CreatedByUserId;
+                userIdNameMap.TryGetValue(vehicle.CreatedByUserId, out var name);
+                dto.CreatedByUserName = name;
+                return dto;
             }).ToList();
 
             return ApiResponse<List<VehicleDto>>.SuccessResult(listVehiclesDto, null);

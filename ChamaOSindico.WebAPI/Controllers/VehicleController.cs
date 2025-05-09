@@ -1,8 +1,5 @@
-﻿using ChamaOSindico.Application.Commom;
-using ChamaOSindico.Application.DTOs;
+﻿using ChamaOSindico.Application.DTOs.Vehicles;
 using ChamaOSindico.Application.Interfaces;
-using ChamaOSindico.Domain.Entities;
-using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
