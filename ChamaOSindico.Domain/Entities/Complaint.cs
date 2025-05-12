@@ -12,5 +12,6 @@ namespace ChamaOSindico.Domain.Entities
         public DateTime? ClosedAt { get; set; }
         public string? CreatedByUserId { get; set; }
         public string? ClosedByUserId { get; set; }
+        public List<ComplaintAnswer> Answers { get; set; } = new List<ComplaintAnswer>();
     }
 }

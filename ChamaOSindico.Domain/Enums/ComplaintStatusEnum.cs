@@ -2,8 +2,8 @@
 {
     public enum ComplaintStatusEnum
     {
-        Open = 1,
-        InProgress = 2,
-        Closed = 3
+        Pending = 0,
+        InProgress = 1,
+        Resolved = 2
     }
 }

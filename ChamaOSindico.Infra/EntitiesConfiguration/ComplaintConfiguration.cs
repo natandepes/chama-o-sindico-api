@@ -24,7 +24,7 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
             
             classMap.MapMember(c => c.Status)
                 .SetIsRequired(true)
-                .SetDefaultValue(ComplaintStatusEnum.Open);
+                .SetDefaultValue(ComplaintStatusEnum.Pending);
             
             classMap.MapMember(c => c.CreatedAt)
                 .SetIsRequired(true)
