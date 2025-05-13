@@ -2,11 +2,6 @@
 using ChamaOSindico.Domain.Interfaces;
 using ChamaOSindico.Infra.Context;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChamaOSindico.Infra.Repository
 {
@@ -17,6 +12,14 @@ namespace ChamaOSindico.Infra.Repository
         public AreaReservationRepository(MongoAppDbContext context)
         {
             _context = context.GetCollection<AreaReservation>();
+        }
+
+        public Task AddAnswerToAreaReservationAsync(AreaReservationAnswer answer)
+        {
+            var filter = Builders<AreaReservation>.Filter.Eq(ar => ar.Id, answer.AreaReservationId);
+            var update = Builders<AreaReservation>.Update.Push(ar => ar.Answers, answer);
+
+            return _context.UpdateOneAsync(filter, update);
         }
 
         public async Task DeleteAreaReservationAsync(string id)
@@ -43,6 +46,11 @@ namespace ChamaOSindico.Infra.Repository
             {
                 await _context.ReplaceOneAsync(ar => ar.Id == areaReservation.Id, areaReservation);
             }
+        }
+
+        public async Task UpdateAreaReservationAsync(string areaReservationId, AreaReservation areaReservation)
+        {
+            await _context.ReplaceOneAsync(ar => ar.Id == areaReservationId, areaReservation);
         }
     }
 }

@@ -10,6 +10,6 @@ namespace ChamaOSindico.Application.DTOs.AreaReservation
         public string CreatedByUserId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Status { get; set; }
+        public AreaReservationStatusEnum Status { get; set; }
     }
 }

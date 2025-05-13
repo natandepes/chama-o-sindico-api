@@ -1,6 +1,8 @@
-﻿using ChamaOSindico.Application.DTOs;
+﻿using ChamaOSindico.Application.Commom;
+using ChamaOSindico.Application.DTOs;
 using ChamaOSindico.Application.DTOs.AreaReservation;
 using ChamaOSindico.Application.Interfaces;
+using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,6 +110,20 @@ namespace ChamaOSindico.WebAPI.Controllers
 
 
             return StatusCode(Response.StatusCode, response);
+        }
+
+        [HttpPost(nameof(AddAnswerToAreaReservation))]
+        public async Task<IActionResult> AddAnswerToAreaReservation([FromBody] AreaReservationAnswer answer)
+        {
+            await _areaService.AddAnswerToAreaReservationAsync(answer);
+            return Ok(ApiResponse<string>.SuccessResult(null, "Resposta adicionada com sucesso"));
+        }
+
+        [HttpPost(nameof(ChangeAreaReservationStatus))]
+        public async Task<IActionResult> ChangeAreaReservationStatus([FromBody] ChangeAreaReservationStatusDto dto)
+        {
+            var result = await _areaService.ChangeAreaReservationStatusAsync(dto.AreaReservationId, dto.Status);
+            return Ok(result);
         }
     }
 

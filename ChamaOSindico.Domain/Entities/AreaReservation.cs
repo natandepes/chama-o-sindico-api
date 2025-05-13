@@ -12,5 +12,6 @@ namespace ChamaOSindico.Domain.Entities
         public DateTime EndDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public AreaReservationStatusEnum Status { get; set; }
+        public List<AreaReservationAnswer> Answers { get; set; } = new List<AreaReservationAnswer>();
     }
 }

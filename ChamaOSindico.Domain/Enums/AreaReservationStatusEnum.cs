@@ -2,8 +2,8 @@
 {
     public enum AreaReservationStatusEnum
     {
-        WaitingApproval = 1,
+        Pending = 1,
         Approved = 2,
-        Denied = 3
+        Rejected = 3
     }
 }
