@@ -188,7 +188,7 @@ namespace ChamaOSindico.Application.Services
                 if (resident != null)
                 {
                     userName = resident.Name;
-                    userId = resident.Id;
+                    userId = resident.UserId;
                 }
             } else
             {
@@ -197,7 +197,7 @@ namespace ChamaOSindico.Application.Services
                 if (condominalManager != null)
                 {
                     userName = condominalManager.Name;
-                    userId = condominalManager.Id;
+                    userId = condominalManager.UserId;
                 }
             }
 

@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace ChamaOSindico.Domain.Interfaces
 {
-    public  interface IAreaReservationRepository
+    public interface IAreaReservationRepository
     {
         Task<IEnumerable<AreaReservation>> GetAllAreaReservationsAsync();
         Task<IEnumerable<AreaReservation>> GetAllAreaReservationsByUserAsync(string residentId);
         Task<AreaReservation> GetAreaReservationByIdAsync(string id);
         Task SaveAreaReservationAsync(AreaReservation areaReservation);
         Task DeleteAreaReservationAsync(string id);
+        Task UpdateAreaReservationAsync(string areaReservationId, AreaReservation areaReservation);
+        Task AddAnswerToAreaReservationAsync(AreaReservationAnswer answer);
     }
 }
