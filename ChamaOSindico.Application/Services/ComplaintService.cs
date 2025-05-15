@@ -13,12 +13,14 @@ namespace ChamaOSindico.Application.Services
         private readonly IComplaintRepository _complaintRepository;
         private readonly IResidentRepository _residentRepository;
         private readonly ICondominalManagerRepository _condominalManagerRepository;
+        private readonly IWarningService _warningService;
 
-        public ComplaintService(IComplaintRepository complaintRepository, IResidentRepository residentRepository, ICondominalManagerRepository condominalManagerRepository)
+        public ComplaintService(IComplaintRepository complaintRepository, IResidentRepository residentRepository, ICondominalManagerRepository condominalManagerRepository, IWarningService warningService)
         {
             _complaintRepository = complaintRepository;
             _residentRepository = residentRepository;
             _condominalManagerRepository = condominalManagerRepository;
+            _warningService = warningService;
         }
 
         public async Task<ApiResponse<List<ComplaintResponseDto>>> GetAllAsync()
@@ -162,6 +164,16 @@ namespace ChamaOSindico.Application.Services
 
             await _complaintRepository.AddAnswerToComplaintAsync(answer);
 
+            var warning = new Warning
+            {
+                Title = "Nova resposta sobre denúncia",
+                Description = $"Sua denúncia de título: {complaint.Title} obteve uma nova resposta do síndico!",
+                TargetType = "specific",
+                ResidentUserId = complaint.CreatedByUserId
+            };
+
+            await _warningService.CreateWarningAsync(warning);
+
             return ApiResponse<string>.SuccessResult(null, "Resposta registrada com sucesso.");
         }
 
@@ -182,6 +194,16 @@ namespace ChamaOSindico.Application.Services
             }
 
             await _complaintRepository.UpdateComplaintAsync(complaintId, complaint);
+
+            var warning = new Warning
+            {
+                Title = "Atualização de status de denúncia",
+                Description = $"Sua denúncia de título: {complaint.Title} teve o seu status atualizado pelo síndico!",
+                TargetType = "specific",
+                ResidentUserId = complaint.CreatedByUserId
+            };
+
+            await _warningService.CreateWarningAsync(warning);
 
             return ApiResponse<string>.SuccessResult(null, "Status da denúncia atualizado com sucesso.");
         }

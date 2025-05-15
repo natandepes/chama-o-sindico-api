@@ -15,16 +15,19 @@ namespace ChamaOSindico.Application.Services
         private readonly IAreaReservationRepository _areaReservationRepository;
         private readonly IResidentRepository _residentRepository;
         private readonly ICondominalManagerRepository _condominalManagerRepository;
+        private readonly IWarningService _warningService;
 
         public AreaService(IAreaRepository areaRepository,
             IAreaReservationRepository areaReservationRepository,
             IResidentRepository residentRepository,
-            ICondominalManagerRepository condominalManagerRepository)
+            ICondominalManagerRepository condominalManagerRepository,
+            IWarningService warningService)
         {
             _areaRepository = areaRepository;
             _areaReservationRepository = areaReservationRepository;
             _residentRepository = residentRepository;
             _condominalManagerRepository = condominalManagerRepository;
+            _warningService = warningService;
         }
 
         public async Task<ApiResponse<string>> DeleteAreaAsync(string id)
@@ -201,6 +204,17 @@ namespace ChamaOSindico.Application.Services
             }
 
             await _areaReservationRepository.AddAnswerToAreaReservationAsync(answer);
+
+            var warning = new Warning
+            {
+                Title = "Nova resposta sobre reserva de área",
+                Description = $"Sua reserva da {areaReservation.AreaName}, do dia {areaReservation.StartDate.Date.ToString("dd/MM/yyyy")}, obteve uma nova resposta do síndico!",
+                TargetType = "specific",
+                ResidentUserId = areaReservation.CreatedByUserId
+            };
+
+            await _warningService.CreateWarningAsync(warning);
+
             return ApiResponse<string>.SuccessResult(null, "Resposta adicionada com sucesso.");
         }
 
@@ -216,6 +230,16 @@ namespace ChamaOSindico.Application.Services
             areaReservation.Status = newStatus;
 
             await _areaReservationRepository.UpdateAreaReservationAsync(areaReservationId, areaReservation);
+
+            var warning = new Warning
+            {
+                Title = "Atualização de status de reserva de área",
+                Description = $"Sua reserva da {areaReservation.AreaName}, do dia {areaReservation.StartDate.Date.ToString("dd/MM/yyyy")}, teve o seu status atualizado pelo síndico!",
+                TargetType = "specific",
+                ResidentUserId = areaReservation.CreatedByUserId
+            };
+
+            await _warningService.CreateWarningAsync(warning);
 
             return ApiResponse<string>.SuccessResult(null, "Status da reserva alterado com sucesso.");
         }
