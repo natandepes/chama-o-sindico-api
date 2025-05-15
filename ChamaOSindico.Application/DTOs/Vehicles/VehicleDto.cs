@@ -24,7 +24,7 @@ namespace ChamaOSindico.Application.DTOs.Vehicles
                 CarSpace = vehicle.CarSpace,
                 Model = vehicle.Model,
                 ImageType = vehicle.ImageType,
-                VehicleType = vehicle.VehicleType.ToString() == "Car" ? "Carrro" : "Moto",
+                VehicleType = vehicle.VehicleType.ToString().ToLower() == "car" ? "Carro" : "Moto",
             };
         }
 
@@ -43,7 +43,7 @@ namespace ChamaOSindico.Application.DTOs.Vehicles
                 Model = Model,
                 ImageType = ImageType,
                 CreatedByUserId = CreatedByUserId!,
-                VehicleType = (VehicleTypeEnum)Enum.Parse(typeof(VehicleTypeEnum), VehicleType.ToString() == "Carro" ? "Car" : "Motorcycle")
+                VehicleType = (VehicleTypeEnum)Enum.Parse(typeof(VehicleTypeEnum), VehicleType.ToString().ToLower() == "carro" ? "Car" : "Motorcycle")
             };
         }
 

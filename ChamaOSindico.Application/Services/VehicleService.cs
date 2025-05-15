@@ -22,21 +22,17 @@ namespace ChamaOSindico.Application.Services
         {
             var listVehicles = await _vehicleRepository.GetAllVehiclesAsync();
 
-            // Step 2: Get unique user IDs
             var userIds = listVehicles
                 .Where(v => !string.IsNullOrEmpty(v.CreatedByUserId))
                 .Select(v => v.CreatedByUserId)
                 .Distinct()
                 .ToList();
 
-            // Step 3: Fetch all residents in a single DB query
             var residents = await _residentRepository
                 .GetResidentsByUserIdAsync(userIds);
 
-            // Step 4: Build lookup
             var userIdNameMap = residents.ToDictionary(r => r.UserId, r => r.Name);
 
-            // Step 5: Translate to DTO with CreatedByUserName
             var listVehiclesDto = listVehicles.Select(vehicle =>
             {
                 var dto = VehicleDto.TranslateTo(vehicle);
