@@ -46,14 +46,24 @@ namespace ChamaOSindico.Application.Services
             var serviceId = "";
             if(condominal.Id is not null)
             {
-                serviceId = await _condominalServiceRepository.UpdateVehicleAsync(condominal.Id, condominal);
+                serviceId = await _condominalServiceRepository.UpdateServiceAsync(condominal.Id, condominal);
             }
             else
             {
-                serviceId = await _condominalServiceRepository.CreateVehicleAsync(condominal);
+                serviceId = await _condominalServiceRepository.CreateServiceAsync(condominal);
             }
 
             return ApiResponse<string>.SuccessResult(serviceId, "Service Salvo com Sucesso !");
+        }
+        
+        public async Task<ApiResponse<string>> DeleteService(string serviceId)
+        {
+            if(!string.IsNullOrEmpty(serviceId))
+            {
+                await _condominalServiceRepository.DeleteVehicleAsync(serviceId);
+            }
+
+            return ApiResponse<string>.SuccessResult(null, "Service Removido com Sucesso !");
         }
     }
 }

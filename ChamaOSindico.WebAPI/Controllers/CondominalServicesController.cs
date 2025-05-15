@@ -46,5 +46,18 @@ namespace ChamaOSindico.WebAPI.Controllers
 
             return StatusCode(Response.StatusCode, response);
         }
+
+        [HttpDelete(nameof(DeleteService) + "/{id}")]
+        public async Task<IActionResult> DeleteService(string id)
+        {
+            var response = await _condominalServiceService.DeleteService(id);
+
+            if (response == null)
+            {
+                return NotFound("Condominal Service not found");
+            }
+
+            return StatusCode(Response.StatusCode, response);
+        }
     }
 }

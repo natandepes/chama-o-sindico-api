@@ -6,7 +6,8 @@ namespace ChamaOSindico.Domain.Interfaces
     {
         Task<List<CondominalService>> GetAllServices();
         Task<CondominalService> GetServiceById(string id);
-        public Task<string> CreateVehicleAsync(CondominalService condominalService);
-        public Task<string> UpdateVehicleAsync(string idService, CondominalService condominalService);
+        public Task<string> CreateServiceAsync(CondominalService condominalService);
+        public Task<string> UpdateServiceAsync(string idService, CondominalService condominalService);
+        public Task DeleteVehicleAsync(string id);
     }
 }
