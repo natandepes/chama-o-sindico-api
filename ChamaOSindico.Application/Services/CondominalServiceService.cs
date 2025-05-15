@@ -15,10 +15,13 @@ namespace ChamaOSindico.Application.Services
     public class CondominalServiceService : ICondominalServiceService
     {
         private readonly ICondominalServiceRepository _condominalServiceRepository;
-
-        public CondominalServiceService(ICondominalServiceRepository condominalServiceRepository)
+        private readonly IResidentRepository _residentRepository;
+        private readonly IServiceCommentRepository _serviceCommentRepository;
+        public CondominalServiceService(ICondominalServiceRepository condominalServiceRepository, IServiceCommentRepository serviceCommentRepository, IResidentRepository residentRepository)
         {
             _condominalServiceRepository = condominalServiceRepository;
+            _serviceCommentRepository = serviceCommentRepository;
+            _residentRepository = residentRepository;
         }
 
         public async Task<ApiResponse<List<CondominalServiceDTO>>> GetAllServices()
@@ -64,6 +67,28 @@ namespace ChamaOSindico.Application.Services
             }
 
             return ApiResponse<string>.SuccessResult(null, "Service Removido com Sucesso !");
+        }
+
+        public async Task<ApiResponse<string>> CreateServiceComment(ServiceCommentDTO serviceCommentDto)
+        {
+            var serviceComment = serviceCommentDto.Transform();
+            var resident = await _residentRepository.GetResidentByUserIdAsync(serviceCommentDto.CommentByUserId);
+            serviceComment.CommentByUserName = resident.Name;
+            await _serviceCommentRepository.CreateServiceComment(serviceComment);
+
+            return ApiResponse<string>.SuccessResult(null, "Comentário Salvo com Sucesso !");
+        }
+
+        public async Task<ApiResponse<List<ServiceCommentDTO>>> GetServiceComments(string serviceId)
+        {
+            var comments = await _serviceCommentRepository.GetServiceComments(serviceId);
+
+            var commentsDto = comments.Select(x =>
+            {
+                return ServiceCommentDTO.TransformBack(x);
+            }).ToList();
+
+            return ApiResponse<List<ServiceCommentDTO>>.SuccessResult(commentsDto, null);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Application.DTOs;
+using ChamaOSindico.WebAPI.Extensions;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
@@ -51,6 +52,33 @@ namespace ChamaOSindico.WebAPI.Controllers
         public async Task<IActionResult> DeleteService(string id)
         {
             var response = await _condominalServiceService.DeleteService(id);
+
+            if (response == null)
+            {
+                return NotFound("Condominal Service not found");
+            }
+
+            return StatusCode(Response.StatusCode, response);
+        }
+
+        [HttpPost(nameof(CreateServiceComment))]
+        public async Task<IActionResult> CreateServiceComment([FromBody] ServiceCommentDTO serviceComment)
+        {
+            serviceComment.CommentByUserId = User.GetUserId();
+            var response = await _condominalServiceService.CreateServiceComment(serviceComment);
+
+            if (response == null)
+            {
+                return NotFound("Condominal Service not found");
+            }
+
+            return StatusCode(Response.StatusCode, response);
+        }
+
+        [HttpGet(nameof(GetServiceComments) + "/{id}")]
+        public async Task<IActionResult> GetServiceComments(string serviceId)
+        {
+            var response = await _condominalServiceService.GetServiceComments(serviceId);
 
             if (response == null)
             {

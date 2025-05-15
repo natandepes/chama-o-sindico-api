@@ -15,5 +15,7 @@ namespace ChamaOSindico.Application.Interfaces
         Task<ApiResponse<CondominalServiceDTO>> GetServiceById(string id);
         Task<ApiResponse<string>> SaveService(CondominalServiceDTO condominalService);
         Task<ApiResponse<string>> DeleteService(string id);
+        Task<ApiResponse<string>> CreateServiceComment(ServiceCommentDTO serviceComment);
+        Task<ApiResponse<List<ServiceCommentDTO>>> GetServiceComments(string serviceId);
     }
 }
