@@ -19,8 +19,8 @@ namespace ChamaOSindico.WebAPI.Controllers
             _residentRepository = residentRepository;
         }
 
-        [HttpGet(nameof(GetAll))]
-        public async Task<IActionResult> GetAll()
+        [HttpGet(nameof(GetAllResidents))]
+        public async Task<IActionResult> GetAllResidents()
         {
             var listResidents = await _residentRepository.GetAllResidentsAsync();
             return Ok(listResidents);

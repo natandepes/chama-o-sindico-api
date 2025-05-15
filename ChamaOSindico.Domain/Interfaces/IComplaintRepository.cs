@@ -2,7 +2,6 @@ using ChamaOSindico.Domain.Entities;
 
 namespace ChamaOSindico.Domain.Interfaces
 {
-
         public interface IComplaintRepository
         {
                 Task<List<Complaint>> GetAllComplaintsAsync();
@@ -11,5 +10,6 @@ namespace ChamaOSindico.Domain.Interfaces
                 Task CreateComplaintAsync(Complaint complaint);
                 Task UpdateComplaintAsync(string idcomplaint, Complaint complaint);
                 Task DeleteComplaintAsync(string idcomplaint);
+                Task AddAnswerToComplaintAsync(ComplaintAnswer answer);
         }
 }

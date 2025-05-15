@@ -77,6 +77,7 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<ICondominalServiceService, CondominalServiceService>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(

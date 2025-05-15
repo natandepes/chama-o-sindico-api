@@ -5,6 +5,7 @@ using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.Domain.Entities;
 using ChamaOSindico.Domain.Enums;
 using ChamaOSindico.Domain.Interfaces;
+using System.Net;
 
 namespace ChamaOSindico.Application.Services
 {
@@ -13,14 +14,17 @@ namespace ChamaOSindico.Application.Services
         private readonly IAreaRepository _areaRepository;
         private readonly IAreaReservationRepository _areaReservationRepository;
         private readonly IResidentRepository _residentRepository;
+        private readonly ICondominalManagerRepository _condominalManagerRepository;
 
         public AreaService(IAreaRepository areaRepository,
             IAreaReservationRepository areaReservationRepository,
-            IResidentRepository residentRepository)
+            IResidentRepository residentRepository,
+            ICondominalManagerRepository condominalManagerRepository)
         {
             _areaRepository = areaRepository;
             _areaReservationRepository = areaReservationRepository;
             _residentRepository = residentRepository;
+            _condominalManagerRepository = condominalManagerRepository;
         }
 
         public async Task<ApiResponse<string>> DeleteAreaAsync(string id)
@@ -97,7 +101,7 @@ namespace ChamaOSindico.Application.Services
                 StartDate = areaReservationDTO.StartDate,
                 EndDate = areaReservationDTO.EndDate,
                 CreatedAt = DateTime.Now,
-                Status = (AreaReservationStatusEnum)Enum.Parse(typeof(AreaReservationStatusEnum), areaReservationDTO.Status)
+                Status = areaReservationDTO.Status
             };
 
             await _areaReservationRepository.SaveAreaReservationAsync(areaReservation);
@@ -146,11 +150,74 @@ namespace ChamaOSindico.Application.Services
         }
          
 
-        public async Task<ApiResponse<AreaReservation>> GetAreaReservationByIdAsync(string id)
+        public async Task<ApiResponse<AreaReservationFullResponseDto>> GetAreaReservationByIdAsync(string id)
         {
-            var reservations = await _areaReservationRepository.GetAreaReservationByIdAsync(id);
+            var reservation = await _areaReservationRepository.GetAreaReservationByIdAsync(id);
 
-            return ApiResponse<AreaReservation>.SuccessResult(reservations, null);
+            if (reservation == null)
+            {
+                return ApiResponse<AreaReservationFullResponseDto>.ErrorResult("Reserva não encontrada.", HttpStatusCode.NotFound);
+            }
+
+            var createdByResident = await _residentRepository.GetResidentByUserIdAsync(reservation.CreatedByUserId);
+            
+            var answers = new List<AreaReservationAnswerResponseDto>();
+
+            foreach (var answer in reservation.Answers)
+            {
+                var manager = await _condominalManagerRepository.GetCondominalManagerByUserIdAsync(answer.AnsweredByUserId);
+
+                answers.Add(new AreaReservationAnswerResponseDto
+                {
+                    AreaReservationId = answer.AreaReservationId,
+                    Answer = answer.Answer,
+                    AnsweredByUserName = manager.Name,
+                    AnsweredAt = answer.AnsweredAt
+                });
+            }
+
+            var dto = new AreaReservationFullResponseDto
+            {
+                AreaName = reservation.AreaName,
+                AreaId = reservation.AreaId,
+                CreatedByUserName = createdByResident.Name,
+                StartDate = reservation.StartDate,
+                EndDate = reservation.EndDate,
+                CreatedAt = reservation.CreatedAt,
+                Status = reservation.Status,
+                Answers = answers
+            };
+
+            return ApiResponse<AreaReservationFullResponseDto>.SuccessResult(dto, "Reserva Carregada");
+        }
+
+        public async Task<ApiResponse<string>> AddAnswerToAreaReservationAsync(AreaReservationAnswer answer)
+        {
+            var areaReservation = await _areaReservationRepository.GetAreaReservationByIdAsync(answer.AreaReservationId);
+
+            if (areaReservation == null)
+            {
+                return ApiResponse<string>.ErrorResult("Reserva não encontrada para responder.", HttpStatusCode.NotFound);
+            }
+
+            await _areaReservationRepository.AddAnswerToAreaReservationAsync(answer);
+            return ApiResponse<string>.SuccessResult(null, "Resposta adicionada com sucesso.");
+        }
+
+        public async Task<ApiResponse<string>> ChangeAreaReservationStatusAsync(string areaReservationId, AreaReservationStatusEnum newStatus)
+        {
+            var areaReservation = await _areaReservationRepository.GetAreaReservationByIdAsync(areaReservationId);
+
+            if (areaReservation == null)
+            {
+                return ApiResponse<string>.ErrorResult("Reserva não encontrada.", HttpStatusCode.NotFound);
+            }
+
+            areaReservation.Status = newStatus;
+
+            await _areaReservationRepository.UpdateAreaReservationAsync(areaReservationId, areaReservation);
+
+            return ApiResponse<string>.SuccessResult(null, "Status da reserva alterado com sucesso.");
         }
     }
 }

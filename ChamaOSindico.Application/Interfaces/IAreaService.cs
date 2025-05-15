@@ -2,11 +2,7 @@
 using ChamaOSindico.Application.DTOs;
 using ChamaOSindico.Application.DTOs.AreaReservation;
 using ChamaOSindico.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ChamaOSindico.Domain.Enums;
 
 namespace ChamaOSindico.Application.Interfaces
 {
@@ -18,8 +14,10 @@ namespace ChamaOSindico.Application.Interfaces
         Task<ApiResponse<string>> DeleteAreaAsync(string id);
         Task<ApiResponse<List<AreaReservationResponseDto>>> GetAllAreaReservationsAsync();
         Task<ApiResponse<List<AreaReservation>>> GetAllAreaReservationsByUserAsync(string userId);
-        Task<ApiResponse<AreaReservation>> GetAreaReservationByIdAsync(string id);
+        Task<ApiResponse<AreaReservationFullResponseDto>> GetAreaReservationByIdAsync(string id);
         Task<ApiResponse<string>> SaveAreaReservationAsync(AreaReservationDTO areaReservation);
         Task<ApiResponse<string>> DeleteAreaReservationAsync(string id);
+        Task<ApiResponse<string>> AddAnswerToAreaReservationAsync(AreaReservationAnswer answer);
+        Task<ApiResponse<string>> ChangeAreaReservationStatusAsync(string areaReservationId, AreaReservationStatusEnum newStatus);
     }
 }

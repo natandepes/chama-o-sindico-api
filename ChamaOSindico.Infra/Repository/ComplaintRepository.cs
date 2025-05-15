@@ -40,14 +40,22 @@ namespace ChamaOSindico.Infra.Repository
             await _context.InsertOneAsync(complaint);
         }
 
-        public async Task UpdateComplaintAsync(string idCcomplaint, Complaint complaint)
-        {
-            await _context.ReplaceOneAsync(c => c.Id == idCcomplaint, complaint);
-        }
-
         public async Task DeleteComplaintAsync(string complaint)
         {
             await _context.DeleteOneAsync(c => c.Id == complaint);
+        }
+
+        public async Task AddAnswerToComplaintAsync(ComplaintAnswer answer)
+        {
+            var filter = Builders<Complaint>.Filter.Eq(c => c.Id, answer.ComplaintId);
+            var update = Builders<Complaint>.Update.Push(c => c.Answers, answer);
+
+            await _context.UpdateOneAsync(filter, update);
+        }
+
+        public async Task UpdateComplaintAsync(string idComplaint, Complaint complaint)
+        {
+            await _context.ReplaceOneAsync(c => c.Id == idComplaint, complaint);
         }
     }
 }
