@@ -64,6 +64,8 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IAreaRepository, AreaRepository>();
             services.AddScoped<IAreaReservationRepository, AreaReservationRepository>();
             services.AddScoped<ICondominalManagerRepository, CondominalManagerRepository>();
+            services.AddScoped<ICondominalServiceRepository, CondominalServiceRepository>();
+            services.AddScoped<IServiceCommentRepository, ServiceCommentRepository>();
             services.AddScoped<IWarningRepository, WarningRepository>();
 
             // Register Services
@@ -73,6 +75,7 @@ namespace ChamaOSindico.IoC
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IComplaintService, ComplaintService>();
+            services.AddScoped<ICondominalServiceService, CondominalServiceService>();
             services.AddScoped<IWarningService, WarningService>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
