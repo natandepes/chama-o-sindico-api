@@ -4,6 +4,9 @@ namespace ChamaOSindico.Domain.Interfaces
 {
     public interface ICondominalServiceRepository
     {
-        Task<string> CreateCondominalServiceAsync(CondominalService condominalService);
+        Task<List<CondominalService>> GetAllServices();
+        Task<CondominalService> GetServiceById(string id);
+        public Task<string> CreateVehicleAsync(CondominalService condominalService);
+        public Task<string> UpdateVehicleAsync(string idService, CondominalService condominalService);
     }
 }

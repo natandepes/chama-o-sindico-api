@@ -14,9 +14,27 @@ namespace ChamaOSindico.Infra.Repository
             _context = context.GetCollection<CondominalService>();
         }
 
-        public async Task<string> CreateCondominalServiceAsync(CondominalService condominalService)
+        public async Task<List<CondominalService>> GetAllServices()
+        {
+            return await _context.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<CondominalService> GetServiceById(string id)
+        {
+            return await _context.Find(s => s.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<string> CreateVehicleAsync(CondominalService condominalService)
         {
             await _context.InsertOneAsync(condominalService);
+
+            return condominalService.Id!;
+        }
+
+        public async Task<string> UpdateVehicleAsync(string idService, CondominalService condominalService)
+        {
+            await _context.ReplaceOneAsync(v => v.Id == idService, condominalService);
+
             return condominalService.Id!;
         }
     }
