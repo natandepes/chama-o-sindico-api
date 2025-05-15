@@ -135,7 +135,8 @@ namespace ChamaOSindico.Application.Services
                     AreaName = reservation.AreaName,
                     CreatedByUserName = resident.Name,
                     StartDate = reservation.StartDate,
-                    EndDate = reservation.EndDate
+                    EndDate = reservation.EndDate,
+                    Status = reservation.Status
                 };
 
                 areaReservationDto.Add(areaReservation);
