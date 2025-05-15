@@ -75,7 +75,7 @@ namespace ChamaOSindico.WebAPI.Controllers
             return StatusCode(Response.StatusCode, response);
         }
 
-        [HttpGet(nameof(GetServiceComments) + "/{id}")]
+        [HttpGet(nameof(GetServiceComments) + "/{serviceId}")]
         public async Task<IActionResult> GetServiceComments(string serviceId)
         {
             var response = await _condominalServiceService.GetServiceComments(serviceId);

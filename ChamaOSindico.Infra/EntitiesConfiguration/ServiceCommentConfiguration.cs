@@ -27,7 +27,6 @@ namespace ChamaOSindico.Infra.EntitiesConfiguration
                 .SetSerializer(new StringSerializer(BsonType.ObjectId))
                 .SetIsRequired(true);
             classMap.MapMember(c => c.CommentByUserName)
-                .SetSerializer(new StringSerializer(BsonType.ObjectId))
                 .SetIsRequired(true);
             classMap.MapMember(c => c.CreatedAt)
                 .SetIsRequired(true);
