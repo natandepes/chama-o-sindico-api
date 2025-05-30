@@ -3,6 +3,7 @@ using ChamaOSindico.Application.Interfaces;
 using ChamaOSindico.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ChamaOSindico.WebAPI.Controllers
 {
@@ -51,7 +52,11 @@ namespace ChamaOSindico.WebAPI.Controllers
         [HttpPost(nameof(SaveVehicle))]
         public async Task<IActionResult> SaveVehicle([FromBody] VehicleDto vehicle)
         {
-            vehicle.CreatedByUserId = User.GetUserId();
+            if (vehicle.CreatedByUserId.IsNullOrEmpty())
+            {
+                vehicle.CreatedByUserId = User.GetUserId();
+            }
+          
             var response = await _vehicleService.SaveVehicle(vehicle);
             return StatusCode(Response.StatusCode, response);
         }

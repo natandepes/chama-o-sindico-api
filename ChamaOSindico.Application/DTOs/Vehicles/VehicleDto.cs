@@ -25,6 +25,7 @@ namespace ChamaOSindico.Application.DTOs.Vehicles
                 Model = vehicle.Model,
                 ImageType = vehicle.ImageType,
                 VehicleType = vehicle.VehicleType.ToString().ToLower() == "car" ? "Carro" : "Moto",
+                CreatedByUserId = vehicle.CreatedByUserId
             };
         }
 
